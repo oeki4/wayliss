@@ -1,0 +1,75 @@
+<script setup lang="ts">
+import Email from "@/shared/ui/Icons/Email.vue";
+import RegisterInput from "@/shared/ui/Input/RegisterInput.vue";
+import Password from "@/shared/ui/Icons/Password.vue";
+import { useForm } from "vee-validate";
+import * as yup from "yup";
+
+const emit = defineEmits<{
+  (e: "onSecondStep"): void;
+}>();
+
+const { errors, defineField, handleSubmit } = useForm({
+  validationSchema: yup.object({
+    email: yup
+      .string()
+      .required("Имя пользователя обязательно для заполнения")
+      .email("Некорректная почта"),
+    password: yup
+      .string()
+      .required("Пароль обязателен для заполнения")
+      .min(6, "Минимальная длина пароля - 6 символов"),
+    confirmPassword: yup
+      .string()
+      .required("Повтор пароля обязателен для заполнения")
+      .oneOf([yup.ref("password"), null], "Пароли не совпадают"),
+  }),
+});
+
+const [email, emailAttrs] = defineField("email");
+const [password, passwordAttrs] = defineField("password");
+const [confirmPassword, confirmPasswordAttrs] = defineField("confirmPassword");
+
+const onSubmit = handleSubmit(async (values) => {
+  console.log(values);
+  emit("onSecondStep");
+});
+</script>
+
+<template>
+  <form class="w-full flex flex-col gap-6 mt-10">
+    <RegisterInput
+      v-model="email"
+      :error="errors?.email"
+      v-bind="emailAttrs"
+      type="text"
+      placeholder="Электронная почта"
+    >
+      <template #left-icon> <Email /></template>
+    </RegisterInput>
+    <RegisterInput
+      v-model="password"
+      :error="errors?.password"
+      v-bind="passwordAttrs"
+      type="password"
+      placeholder="Пароль"
+    >
+      <template #left-icon> <Password /></template>
+    </RegisterInput>
+    <RegisterInput
+      v-model="confirmPassword"
+      :error="errors?.confirmPassword"
+      v-bind="confirmPasswordAttrs"
+      type="password"
+      placeholder="Повтор пароля"
+    >
+      <template #left-icon> <Password /></template>
+    </RegisterInput>
+    <button
+      class="font-montserrat font-semibold cursor-pointer bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
+      @click.prevent="onSubmit"
+    >
+      Далее
+    </button>
+  </form>
+</template>
