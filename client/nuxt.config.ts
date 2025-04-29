@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   alias: {
     "@": "../src",
   },
-  modules: ["@nuxt/eslint", "@nuxt/fonts"],
+  modules: ["@nuxt/eslint", "@nuxt/fonts", "@pinia/nuxt"],
   css: ["./src/app/assets/css/reset.css", "./src/app/assets/css/main.css"],
   dir: {
     pages: "./src/app/routes",

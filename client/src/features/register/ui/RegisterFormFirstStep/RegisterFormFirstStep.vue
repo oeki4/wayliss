@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import Email from "@/shared/ui/Icons/Email.vue";
+import EmailIcon from "@/shared/ui/Icons/EmailIcon.vue";
 import RegisterInput from "@/shared/ui/Input/RegisterInput.vue";
-import Password from "@/shared/ui/Icons/Password.vue";
+import PasswordIcon from "@/shared/ui/Icons/PasswordIcon.vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
+import { useRegisterFormSlice } from "../../model/slice/useRegisterFormSlice";
 
+const { setFirstStepData } = useRegisterFormSlice();
 const emit = defineEmits<{
   (e: "onSecondStep"): void;
 }>();
@@ -13,7 +15,7 @@ const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
     email: yup
       .string()
-      .required("Имя пользователя обязательно для заполнения")
+      .required("Электронная почта обязательна для заполнения")
       .email("Некорректная почта"),
     password: yup
       .string()
@@ -31,7 +33,10 @@ const [password, passwordAttrs] = defineField("password");
 const [confirmPassword, confirmPasswordAttrs] = defineField("confirmPassword");
 
 const onSubmit = handleSubmit(async (values) => {
-  console.log(values);
+  setFirstStepData({
+    email: values.email,
+    password: values.password,
+  });
   emit("onSecondStep");
 });
 </script>
@@ -45,7 +50,7 @@ const onSubmit = handleSubmit(async (values) => {
       type="text"
       placeholder="Электронная почта"
     >
-      <template #left-icon> <Email /></template>
+      <template #left-icon> <EmailIcon /></template>
     </RegisterInput>
     <RegisterInput
       v-model="password"
@@ -54,7 +59,7 @@ const onSubmit = handleSubmit(async (values) => {
       type="password"
       placeholder="Пароль"
     >
-      <template #left-icon> <Password /></template>
+      <template #left-icon> <PasswordIcon /></template>
     </RegisterInput>
     <RegisterInput
       v-model="confirmPassword"
@@ -63,7 +68,7 @@ const onSubmit = handleSubmit(async (values) => {
       type="password"
       placeholder="Повтор пароля"
     >
-      <template #left-icon> <Password /></template>
+      <template #left-icon> <PasswordIcon /></template>
     </RegisterInput>
     <button
       class="font-montserrat font-semibold cursor-pointer bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
