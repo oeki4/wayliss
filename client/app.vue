@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Alert } from "@/features/alert";
+import { Header } from "@/widgets/Header";
 </script>
 
 <template>
-  <header class="h-[100px]">Header</header>
+  <Header>Header</Header>
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>

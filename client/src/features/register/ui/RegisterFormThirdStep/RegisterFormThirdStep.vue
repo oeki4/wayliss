@@ -3,6 +3,7 @@ import RegisterTextarea from "@/shared/ui/Textarea/RegisterTextarea.vue";
 import { Field, useForm } from "vee-validate";
 import * as yup from "yup";
 import { useRegisterFormSlice } from "@/features/register/model/slice/useRegisterFormSlice";
+import CameraIcon from "@/shared/ui/Icons/CameraIcon.vue";
 
 const { setThirdStepData } = useRegisterFormSlice();
 
@@ -13,10 +14,21 @@ const emit = defineEmits<{
 const { defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
     description: yup.string().required("Описание обязательно для заполнения"),
+    avatar: yup
+      .mixed()
+      .test("is-image", "Для аватара необходимо изображение", (value) => {
+        if (!value) return true;
+        return value.type.startsWith("image/");
+      })
+      .test("file-size", "Максимальный размер аватара - 2MB", (value) => {
+        if (!value) return true;
+        return value.size <= 2 * 1024 * 1024;
+      }),
   }),
 });
 
 const [description] = defineField("description");
+const [avatar, avatarAttrs] = defineField("avatar");
 
 const onSubmit = handleSubmit(async (values) => {
   setThirdStepData({
@@ -24,10 +36,49 @@ const onSubmit = handleSubmit(async (values) => {
   });
   emit("onFinishRegister");
 });
+
+const avatarUrl = computed(() =>
+  avatar.value ? URL.createObjectURL(avatar.value) : null,
+);
 </script>
 
 <template>
   <form class="w-full flex flex-col gap-4 mt-10" @submit.prevent="onSubmit">
+    <Field
+      v-slot="{ handleChange, handleBlur, errors }"
+      v-model="avatar"
+      name="file"
+    >
+      <div class="flex flex-col items-center">
+        <label class="relative inline-block w-full mb-2.5">
+          <input
+            type="file"
+            class="absolute -z-1 opacity-0 block w-0 h-0"
+            v-bind="avatarAttrs"
+            @change="handleChange"
+            @blur="handleBlur"
+          />
+          <img
+            v-if="avatarUrl"
+            :src="avatarUrl"
+            class="rounded-xl cursor-pointer hover:border-sky-700 border-sky-500 transition-all max-h-50 border-3 w-full"
+            alt="preview"
+          />
+          <span
+            v-else
+            class="relative flex flex-col items-center group w-full h-min border-dashed cursor-pointer outline-0 decoration-0 text-sm align-middle text-sky-500 hover:text-sky-700 font-montserrat font-semibold text-center rounded-xl border-3 hover:border-sky-700 border-sky-500 px-5 py-2.5 box-border m-0 transition-all"
+          >
+            <CameraIcon
+              class="w-10 relative inline-block group-hover:stroke-sky-700 stroke-sky-500 transition-all"
+            />
+            Загрузите аватар
+          </span>
+        </label>
+        <p class="text-red-500 text-sm text-center">
+          {{ errors[0] }}
+        </p>
+      </div>
+    </Field>
     <p class="font-montserrat text-sky-800 leading-5">
       Расскажите немного о себе... Это повысит шансы найти кого-то на платформе
       :)
