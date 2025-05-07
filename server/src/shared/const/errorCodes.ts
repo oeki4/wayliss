@@ -1,0 +1,5 @@
+export enum ErrorCodes {
+  INCORRECT_AVATAR = 1,
+  USER_ALREADY_EXISTS = 2,
+  INTERNAL_SERVER_ERROR = 500,
+}

@@ -4,7 +4,7 @@ import { Header } from "@/widgets/Header";
 </script>
 
 <template>
-  <Header>Header</Header>
+  <Header />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
