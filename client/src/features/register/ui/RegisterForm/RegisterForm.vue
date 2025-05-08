@@ -66,7 +66,6 @@ const onFinishRegister = async () => {
     } else {
       setAlert("Ошибка сервера", "error");
     }
-
     console.log(e);
   }
 };

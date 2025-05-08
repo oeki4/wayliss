@@ -13,7 +13,10 @@ const emit = defineEmits<{
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
     name: yup.string().required("Имя обязательно для заполнения"),
-    age: yup.number().required("Возраст обязателен для заполнения"),
+    age: yup
+      .number()
+      .required("Возраст обязателен для заполнения")
+      .min(18, "Регистрация на сайте возможна только лицам, достигшим 18 лет"),
   }),
 });
 

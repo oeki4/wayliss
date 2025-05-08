@@ -5,7 +5,13 @@ import PasswordIcon from "@/shared/ui/Icons/PasswordIcon.vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { useAlertSlice } from "@/features/alert";
+import { useLoginFormSlice } from "../../model/slice/useLoginFormSlice";
+import type { FetchError } from "ofetch";
+import { AUTH_TOKEN } from "@/shared/const/constants";
+import { useUserSlice } from "@/entities/user";
 const { setAlert } = useAlertSlice();
+const { login } = useLoginFormSlice();
+const { setUser, fetchProfile } = useUserSlice();
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
     email: yup
@@ -18,8 +24,44 @@ const { errors, defineField, handleSubmit } = useForm({
 const [email, emailAttrs] = defineField("email");
 const [password, passwordAttrs] = defineField("password");
 
-const onSubmit = handleSubmit(async () => {
-  setAlert("Авторизация прошла успешно!");
+const onSubmit = handleSubmit(async (values) => {
+  try {
+    const res = await login({
+      email: values.email,
+      password: values.password,
+    });
+    const token = useCookie(AUTH_TOKEN);
+    token.value = res.data.token;
+    setAlert("Авторизация прошла успешно!");
+  } catch (e) {
+    if (e instanceof Error) {
+      const error = e as FetchError;
+      if (error.data?.code === 100) {
+        setAlert("Ошибка при отправке данных на сервер", "error");
+      }
+      if (error.data?.code === 3) {
+        setAlert("Неправильная почта или пароль", "error");
+      }
+    } else {
+      setAlert("Ошибка сервера", "error");
+    }
+    console.log(e);
+  }
+
+  try {
+    const res = await fetchProfile();
+    setUser(res.data);
+  } catch (e) {
+    if (e instanceof Error) {
+      const error = e as FetchError;
+      if (error.data?.code === 3) {
+        setAlert("Вы не авторизованы", "error");
+      }
+    } else {
+      setAlert("Ошибка сервера", "error");
+    }
+    console.log(e);
+  }
 });
 </script>
 

@@ -58,9 +58,6 @@ export const useRegisterFormSlice = defineStore("registerForm", () => {
     >(`${config.public.API_URL}/users`, {
       method: "POST",
       body: formData,
-      onResponseError({ response }) {
-        console.log(response);
-      },
     });
   };
 

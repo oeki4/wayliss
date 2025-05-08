@@ -9,6 +9,10 @@ export const useAlertSlice = defineStore("alert", () => {
   ) => {
     text.value = newText;
     status.value = newStatus;
+
+    setTimeout(() => {
+      text.value = "";
+    }, 3000);
   };
   return {
     text,
