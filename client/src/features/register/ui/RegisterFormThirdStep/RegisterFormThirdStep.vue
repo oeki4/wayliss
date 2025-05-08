@@ -33,6 +33,7 @@ const [avatar, avatarAttrs] = defineField("avatar");
 const onSubmit = handleSubmit(async (values) => {
   setThirdStepData({
     description: values.description,
+    avatar: values.avatar || null,
   });
   emit("onFinishRegister");
 });

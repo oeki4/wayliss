@@ -14,7 +14,6 @@ async function bootstrap() {
     new ValidationPipe({
       exceptionFactory: (errors) => {
         if (!(errors[0].constraints === undefined)) {
-          console.log(Object.values(errors[0].constraints)?.[0]);
           return new HttpException(
             Object.values(errors[0].constraints)?.[0],
             ErrorCodes.DATA_VALIDATION_ERROR,
@@ -26,9 +25,11 @@ async function bootstrap() {
           );
         }
       },
+      transform: true,
       whitelist: true,
     }),
   );
+  app.enableCors();
 
   if (!fs.existsSync(path.resolve('uploads'))) {
     try {

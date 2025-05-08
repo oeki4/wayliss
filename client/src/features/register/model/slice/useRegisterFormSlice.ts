@@ -1,8 +1,19 @@
 import type { FirstStepData } from "../types/firstStep";
 import type { SecondStepData } from "../types/secondStep";
 import type { ThirdStepData } from "../types/thirdStep";
+import type { ServerResponse } from "@/shared/types/serverResponse";
+
+interface RegisterProps {
+  email: string;
+  firstName: string;
+  password: string;
+  age: number;
+  description: string;
+  avatar: File | null;
+}
 
 export const useRegisterFormSlice = defineStore("registerForm", () => {
+  const config = useRuntimeConfig();
   const firstStepData: Ref<FirstStepData | null> = ref(null);
   const secondStepData: Ref<SecondStepData | null> = ref(null);
   const thirdStepData: Ref<ThirdStepData | null> = ref(null);
@@ -16,6 +27,43 @@ export const useRegisterFormSlice = defineStore("registerForm", () => {
   const setThirdStepData = (data: ThirdStepData) => {
     thirdStepData.value = data;
   };
+
+  const register = async ({
+    email,
+    firstName,
+    password,
+    age,
+    description,
+    avatar,
+  }: RegisterProps) => {
+    const formData = new FormData();
+    formData.append("firstName", firstName);
+    formData.append("password", password);
+    formData.append("email", email);
+    formData.append("age", age.toString());
+    formData.append("description", description);
+    if (avatar) {
+      formData.append("avatar", avatar);
+    }
+
+    return $fetch<
+      ServerResponse<{
+        id: number;
+        firstName: string;
+        email: string;
+        avatar: string | null;
+        age: number;
+        description: string;
+      }>
+    >(`${config.public.API_URL}/users`, {
+      method: "POST",
+      body: formData,
+      onResponseError({ response }) {
+        console.log(response);
+      },
+    });
+  };
+
   return {
     setFirstStepData,
     firstStepData,
@@ -23,5 +71,6 @@ export const useRegisterFormSlice = defineStore("registerForm", () => {
     secondStepData,
     setThirdStepData,
     thirdStepData,
+    register,
   };
 });
