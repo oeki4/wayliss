@@ -8,7 +8,7 @@ import { useRegisterFormSlice } from "../../model/slice/useRegisterFormSlice";
 
 const { setFirstStepData } = useRegisterFormSlice();
 const emit = defineEmits<{
-  (e: "onSecondStep"): void;
+  (e: "onSetStep", newStep: number): void;
 }>();
 
 const { errors, defineField, handleSubmit } = useForm({
@@ -37,7 +37,7 @@ const onSubmit = handleSubmit(async (values) => {
     email: values.email,
     password: values.password,
   });
-  emit("onSecondStep");
+  emit("onSetStep", 2);
 });
 </script>
 

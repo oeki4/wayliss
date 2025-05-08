@@ -9,9 +9,10 @@ const { setThirdStepData } = useRegisterFormSlice();
 
 const emit = defineEmits<{
   (e: "onFinishRegister"): void;
+  (e: "onSetStep", newStep: number): void;
 }>();
 
-const { defineField, handleSubmit } = useForm({
+const { defineField, handleSubmit, errors } = useForm({
   validationSchema: yup.object({
     description: yup.string().required("Описание обязательно для заполнения"),
     avatar: yup
@@ -39,17 +40,17 @@ const onSubmit = handleSubmit(async (values) => {
 });
 
 const avatarUrl = computed(() =>
-  avatar.value ? URL.createObjectURL(avatar.value) : null,
+  avatar.value &&
+  avatar.value.type.startsWith("image/") &&
+  avatar.value.size <= 2 * 1024 * 1024
+    ? URL.createObjectURL(avatar.value)
+    : null,
 );
 </script>
 
 <template>
   <form class="w-full flex flex-col gap-4 mt-10" @submit.prevent="onSubmit">
-    <Field
-      v-slot="{ handleChange, handleBlur, errors }"
-      v-model="avatar"
-      name="file"
-    >
+    <Field v-slot="{ handleChange, handleBlur }" v-model="avatar" name="file">
       <div class="flex flex-col items-center">
         <label class="relative inline-block w-full mb-2.5">
           <input
@@ -76,7 +77,7 @@ const avatarUrl = computed(() =>
           </span>
         </label>
         <p class="text-red-500 text-sm text-center">
-          {{ errors[0] }}
+          {{ errors?.avatar }}
         </p>
       </div>
     </Field>
@@ -87,12 +88,19 @@ const avatarUrl = computed(() =>
     <Field v-slot="{ field }" v-model="description" name="description">
       <RegisterTextarea v-bind="field" />
     </Field>
-
-    <button
-      class="font-montserrat font-semibold cursor-pointer bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
-      type="submit"
-    >
-      Далее
-    </button>
+    <div class="w-full flex gap-4">
+      <button
+        class="font-montserrat font-semibold cursor-pointer w-1/2 bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
+        @click.prevent="$emit('onSetStep', 2)"
+      >
+        Назад
+      </button>
+      <button
+        class="font-montserrat font-semibold cursor-pointer w-1/2 bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
+        type="submit"
+      >
+        Далее
+      </button>
+    </div>
   </form>
 </template>

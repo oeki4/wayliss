@@ -7,7 +7,7 @@ import { useRegisterFormSlice } from "../../model/slice/useRegisterFormSlice";
 const { setSecondStepData } = useRegisterFormSlice();
 
 const emit = defineEmits<{
-  (e: "onThirdStep"): void;
+  (e: "onSetStep", newStep: number): void;
 }>();
 
 const { errors, defineField, handleSubmit } = useForm({
@@ -25,7 +25,7 @@ const onSubmit = handleSubmit(async (values) => {
     age: values.age,
     name: values.name,
   });
-  emit("onThirdStep");
+  emit("onSetStep", 3);
 });
 </script>
 
@@ -45,11 +45,19 @@ const onSubmit = handleSubmit(async (values) => {
       type="text"
       placeholder="Ваш возраст"
     />
-    <button
-      class="font-montserrat font-semibold cursor-pointer bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
-      @click.prevent="onSubmit"
-    >
-      Далее
-    </button>
+    <div class="w-full flex gap-4">
+      <button
+        class="font-montserrat font-semibold cursor-pointer w-1/2 bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
+        @click.prevent="$emit('onSetStep', 1)"
+      >
+        Назад
+      </button>
+      <button
+        class="font-montserrat font-semibold cursor-pointer w-1/2 bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
+        @click.prevent="onSubmit"
+      >
+        Далее
+      </button>
+    </div>
   </form>
 </template>

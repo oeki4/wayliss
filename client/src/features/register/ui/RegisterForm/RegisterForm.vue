@@ -15,13 +15,20 @@ const { firstStepData, secondStepData, thirdStepData } =
 
 const progress = ref(0);
 const step = ref(1);
-const onSecondStep = () => {
-  progress.value = 33;
-  step.value = 2;
-};
-const onThirdStep = () => {
-  progress.value = 66;
-  step.value = 3;
+const onSetStep = (newStep: number) => {
+  if (newStep === 1) {
+    step.value = 1;
+    progress.value = 0;
+  }
+  if (newStep === 2) {
+    step.value = 2;
+    progress.value = 33;
+  }
+
+  if (newStep === 3) {
+    step.value = 3;
+    progress.value = 66;
+  }
 };
 
 const onFinishRegister = async () => {
@@ -44,7 +51,17 @@ const onFinishRegister = async () => {
     if (e instanceof Error) {
       const error = e as FetchError;
       if (error.data?.code === 100) {
+        step.value = 1;
+        progress.value = 0;
         setAlert("Ошибка при отправке данных на сервер", "error");
+      }
+      if (error.data?.code === 1) {
+        setAlert("Загружен некорректный аватар", "error");
+      }
+      if (error.data?.code === 2) {
+        step.value = 1;
+        progress.value = 0;
+        setAlert("Пользователь с такой почтой уже существует", "error");
       }
     } else {
       setAlert("Ошибка сервера", "error");
@@ -68,10 +85,11 @@ const onFinishRegister = async () => {
         :style="`width: ${progress}%`"
       />
     </div>
-    <RegisterFormFirstStep v-if="step === 1" @on-second-step="onSecondStep" />
-    <RegisterFormSecondStep v-if="step === 2" @on-third-step="onThirdStep" />
+    <RegisterFormFirstStep v-show="step === 1" @on-set-step="onSetStep" />
+    <RegisterFormSecondStep v-show="step === 2" @on-set-step="onSetStep" />
     <RegisterFormThirdStep
-      v-if="step === 3"
+      v-show="step === 3"
+      @on-set-step="onSetStep"
       @on-finish-register="onFinishRegister"
     />
   </div>
