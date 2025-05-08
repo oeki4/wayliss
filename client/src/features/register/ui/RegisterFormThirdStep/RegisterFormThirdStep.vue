@@ -61,15 +61,15 @@ const avatarUrl = computed(() =>
           <img
             v-if="avatarUrl"
             :src="avatarUrl"
-            class="rounded-xl cursor-pointer hover:border-sky-700 border-sky-500 transition-all max-h-50 border-3 w-full"
+            class="rounded-xl cursor-pointer hover:border-blue-600 border-blue-500 transition-all max-h-50 border-3 w-full"
             alt="preview"
           />
           <span
             v-else
-            class="relative flex flex-col items-center group w-full h-min border-dashed cursor-pointer outline-0 decoration-0 text-sm align-middle text-sky-500 hover:text-sky-700 font-montserrat font-semibold text-center rounded-xl border-3 hover:border-sky-700 border-sky-500 px-5 py-2.5 box-border m-0 transition-all"
+            class="relative flex flex-col items-center group w-full h-min border-dashed cursor-pointer outline-0 decoration-0 text-sm align-middle text-blue-500 hover:text-blue-600 font-montserrat font-semibold text-center rounded-xl border-3 hover:border-blue-600 border-blue-500 px-5 py-2.5 box-border m-0 transition-all"
           >
             <CameraIcon
-              class="w-10 relative inline-block group-hover:stroke-sky-700 stroke-sky-500 transition-all"
+              class="w-10 relative inline-block group-hover:stroke-blue-600 stroke-blue-500 transition-all"
             />
             Загрузите аватар
           </span>

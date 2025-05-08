@@ -35,7 +35,7 @@ import UserIcon from "@/shared/ui/Icons/UserIcon.vue";
         >
       </div>
       <div class="flex w-min gap-4">
-        <GlassIcon class="w-6 fill-black cursor-pointer" />
+        <GlassIcon class="w-6 stroke-black cursor-pointer" />
         <NuxtLink href="/login">
           <UserIcon class="w-8 stroke-black cursor-pointer" />
         </NuxtLink>

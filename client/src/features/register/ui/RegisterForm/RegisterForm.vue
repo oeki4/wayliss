@@ -22,13 +22,13 @@ const onFinishRegister = () => {
 <template>
   <div class="flex flex-col max-w-[300px] w-full">
     <h3
-      class="uppercase w-full text-center text-xl text-sky-600 font-semibold mt-4 text-montserrat"
+      class="uppercase w-full text-center text-xl text-blue-500 font-semibold mt-4 text-montserrat"
     >
       шаг {{ step }}
     </h3>
-    <div class="w-full h-[14px] border-2 mt-2 border-sky-500 rounded-full">
+    <div class="w-full h-[14px] border-2 mt-2 border-blue-500 rounded-full">
       <div
-        class="h-full bg-sky-500 w-1/2 rounded-full transition-all max-w-full"
+        class="h-full bg-blue-500 w-1/2 rounded-full transition-all max-w-full"
         :style="`width: ${progress}%`"
       />
     </div>
