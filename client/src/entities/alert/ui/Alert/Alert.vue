@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAlertSlice } from "../../model/slice/useAlertSlice";
+import { useAlertSlice } from "@/entities/alert";
 
 const alertStore = useAlertSlice();
 const { text, status } = storeToRefs(alertStore);
