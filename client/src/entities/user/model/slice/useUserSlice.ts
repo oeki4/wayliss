@@ -1,5 +1,4 @@
 import type { User } from "../types/user";
-import { AUTH_TOKEN } from "@/shared/const/constants";
 import type { ServerResponse } from "@/shared/types/serverResponse";
 
 export const useUserSlice = defineStore("user", () => {
@@ -8,19 +7,16 @@ export const useUserSlice = defineStore("user", () => {
     user.value = payload;
   };
 
-  const fetchProfile = () => {
-    const token = useCookie(AUTH_TOKEN);
+  const fetchProfile = (token: string) => {
     const config = useRuntimeConfig();
 
-    return $fetch<ServerResponse<User>>(
-      `${config.public.API_URL}/auth/profile`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token.value}`,
-        },
+    return $fetch<ServerResponse<User>>("/auth/profile", {
+      method: "GET",
+      baseURL: config.public.API_URL,
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
   };
   return {
     fetchProfile,

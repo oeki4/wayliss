@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Alert } from "@/features/alert";
+import { Alert } from "@/entities/alert";
 import { Header } from "@/widgets/Header";
 </script>
 

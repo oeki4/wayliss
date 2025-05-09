@@ -3,7 +3,7 @@ import RegisterFormFirstStep from "../RegisterFormFirstStep/RegisterFormFirstSte
 import RegisterFormSecondStep from "../RegisterFormSecondStep/RegisterFormSecondStep.vue";
 import RegisterFormThirdStep from "../RegisterFormThirdStep/RegisterFormThirdStep.vue";
 import { useRegisterFormSlice } from "../../model/slice/useRegisterFormSlice";
-import { useAlertSlice } from "@/features/alert";
+import { useAlertSlice } from "@/entities/alert";
 import type { FetchError } from "ofetch";
 
 const { register } = useRegisterFormSlice();

@@ -4,7 +4,7 @@ import RegisterInput from "@/shared/ui/Input/RegisterInput.vue";
 import PasswordIcon from "@/shared/ui/Icons/PasswordIcon.vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import { useAlertSlice } from "@/features/alert";
+import { useAlertSlice } from "@/entities/alert";
 import { useLoginFormSlice } from "../../model/slice/useLoginFormSlice";
 import type { FetchError } from "ofetch";
 import { AUTH_TOKEN } from "@/shared/const/constants";
@@ -25,12 +25,13 @@ const [email, emailAttrs] = defineField("email");
 const [password, passwordAttrs] = defineField("password");
 
 const onSubmit = handleSubmit(async (values) => {
+  const token = useCookie(AUTH_TOKEN);
   try {
     const res = await login({
       email: values.email,
       password: values.password,
     });
-    const token = useCookie(AUTH_TOKEN);
+
     token.value = res.data.token;
     setAlert("Авторизация прошла успешно!");
   } catch (e) {
@@ -46,10 +47,11 @@ const onSubmit = handleSubmit(async (values) => {
       setAlert("Ошибка сервера", "error");
     }
     console.log(e);
+    return;
   }
 
   try {
-    const res = await fetchProfile();
+    const res = await fetchProfile(token.value);
     setUser(res.data);
   } catch (e) {
     if (e instanceof Error) {

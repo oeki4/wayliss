@@ -13,8 +13,9 @@ export const useLoginFormSlice = defineStore("loginForm", () => {
       ServerResponse<{
         token: string;
       }>
-    >(`${config.public.API_URL}/auth`, {
+    >("/auth", {
       method: "POST",
+      baseURL: config.public.API_URL,
       body: JSON.stringify({
         email,
         password,

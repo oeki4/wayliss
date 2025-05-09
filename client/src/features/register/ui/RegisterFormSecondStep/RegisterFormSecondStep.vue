@@ -15,6 +15,7 @@ const { errors, defineField, handleSubmit } = useForm({
     name: yup.string().required("Имя обязательно для заполнения"),
     age: yup
       .number()
+      .typeError("Некорректный возраст")
       .required("Возраст обязателен для заполнения")
       .min(18, "Регистрация на сайте возможна только лицам, достигшим 18 лет"),
   }),
