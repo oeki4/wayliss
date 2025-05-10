@@ -1,6 +1,11 @@
+<script setup lang="ts">
+defineEmits<{ (e: "onclick"): void }>();
+</script>
+
 <template>
   <div
     class="w-full sm:w-48/100 lg:w-32/100 xl:w-24/100 flex flex-col gap-3 cursor-pointer"
+    @click="$emit('onclick')"
   >
     <div class="h-50 w-full bg-gray-200 rounded-lg animate-pulse" />
     <div class="flex flex-col gap-2">
@@ -15,4 +20,3 @@
     </div>
   </div>
 </template>
-<script setup lang="ts"></script>

@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { AUTH_TOKEN } from "@/shared/const/constants";
-import { useAlertSlice } from "@/entities/alert";
-import type { ServerResponse } from "@/shared/types/serverResponse";
 import { type User, useUserSlice } from "@/entities/user";
+import { useAlertSlice } from "@/entities/alert";
+import { AUTH_TOKEN } from "@/shared/const/constants";
+import type { ServerResponse } from "@/shared/types/serverResponse";
+import { CreateAnnouncementModal } from "@/features/createAnnouncement";
+const userSlice = useUserSlice();
 const { setAlert } = useAlertSlice();
-const { setUser } = useUserSlice();
-
-const config = useRuntimeConfig();
 const token = useCookie(AUTH_TOKEN);
+const config = useRuntimeConfig();
+
 if (token.value) {
   const { data, error } = useFetch<ServerResponse<User>>("/auth/profile", {
     baseURL: config.public.API_URL,
     headers: { Authorization: `Bearer ${token.value}` },
   });
-
   if (error.value?.data?.code === 3) {
     setAlert("Сессия устарела. Авторизуйтесь, пожалуйста");
     token.value = undefined;
@@ -21,7 +21,7 @@ if (token.value) {
   }
 
   if (data.value) {
-    setUser(data.value.data);
+    userSlice.setUser(data.value.data);
   }
 }
 </script>
@@ -29,5 +29,6 @@ if (token.value) {
 <template>
   <section class="min-h-[calc(100vh-200px)]">
     <slot />
+    <CreateAnnouncementModal />
   </section>
 </template>

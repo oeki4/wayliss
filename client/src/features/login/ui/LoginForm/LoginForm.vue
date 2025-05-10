@@ -34,6 +34,7 @@ const onSubmit = handleSubmit(async (values) => {
 
     token.value = res.data.token;
     setAlert("Авторизация прошла успешно!");
+    navigateTo("/");
   } catch (e) {
     if (e instanceof Error) {
       const error = e as FetchError;

@@ -2,6 +2,7 @@
 import GlassIcon from "@/shared/ui/Icons/GlassIcon.vue";
 import UserIcon from "@/shared/ui/Icons/UserIcon.vue";
 import { useUserSlice } from "@/entities/user";
+import { ShowCreateAnnouncementModalButton } from "@/features/createAnnouncement";
 
 const config = useRuntimeConfig();
 
@@ -39,6 +40,7 @@ const { user } = storeToRefs(useUserSlice());
           >О нас</NuxtLink
         >
       </div>
+      <ShowCreateAnnouncementModalButton />
       <div class="flex w-min gap-4">
         <GlassIcon class="min-w-6 w-6 stroke-black cursor-pointer" />
         <NuxtImg

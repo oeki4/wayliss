@@ -18,6 +18,7 @@ export const useUserSlice = defineStore("user", () => {
       },
     });
   };
+
   return {
     fetchProfile,
     setUser,
