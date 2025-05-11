@@ -3,11 +3,13 @@ import { UsersModule } from '@/modules/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from '@/modules/auth/auth.module';
+import { AnnouncementModule } from '@/modules/announcement/announcement.module';
 
 @Module({
   imports: [
     UsersModule,
     AuthModule,
+    AnnouncementModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.${process.env.NODE_ENV}.env`,
