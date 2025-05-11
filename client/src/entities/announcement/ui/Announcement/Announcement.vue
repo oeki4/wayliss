@@ -1,4 +1,10 @@
 <script setup lang="ts">
+import type { IAnnouncement } from "@/entities/announcement";
+import { DateTime } from "luxon";
+
+defineProps<{
+  announcement: IAnnouncement;
+}>();
 defineEmits<{ (e: "onclick"): void }>();
 </script>
 
@@ -9,13 +15,18 @@ defineEmits<{ (e: "onclick"): void }>();
   >
     <div class="h-50 w-full bg-gray-200 rounded-lg animate-pulse" />
     <div class="flex flex-col gap-2">
-      <h5 class="font-montserrat font-semibold text-xl">Ищу соседа!</h5>
+      <h5 class="font-montserrat font-semibold text-xl">
+        {{ announcement.title }}
+      </h5>
       <p class="line-clamp-4 leading-5">
-        Ищем соседа в уютную 2-комнатную квартиру в центре! Чистый, свежий
-        ремонт, вся мебель и техника есть. Желательно аккуратный, некурящий и
-        без животных. Оплата 50/50 + коммуналка. Рядом метро, магазины и парк.
-        Если ты спокойный, ответственный и любишь порядок — давай знакомиться!
-        😊
+        {{ announcement.description }}
+      </p>
+      <p class="text-sm text-right">
+        {{
+          DateTime.fromISO(announcement.createdAt).toFormat(
+            "dd.LL.yyyy в HH:mm",
+          )
+        }}
       </p>
     </div>
   </div>

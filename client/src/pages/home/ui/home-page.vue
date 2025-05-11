@@ -1,5 +1,26 @@
 <script setup lang="ts">
-import { Announcement } from "@/entities/announcement";
+import type { IAnnouncement } from "@/entities/announcement";
+import { Announcement, useAnnouncementSlice } from "@/entities/announcement";
+import type { ServerResponse } from "@/shared/types/serverResponse";
+import { useAlertSlice } from "@/entities/alert";
+const { setAlert } = useAlertSlice();
+const { setAnnouncements } = useAnnouncementSlice();
+const config = useRuntimeConfig();
+
+const { data, error } = await useFetch<ServerResponse<IAnnouncement[]>>(
+  "/announcements/last",
+  {
+    baseURL: config.public.API_URL,
+  },
+);
+
+if (error.value?.data?.code === 500) {
+  setAlert("Непредвиденная ошибка сервера", "error");
+}
+
+if (data.value) {
+  setAnnouncements(data.value.data);
+}
 </script>
 
 <template>
@@ -7,12 +28,15 @@ import { Announcement } from "@/entities/announcement";
     <h1 class="text-3xl font-montserrat font-medium mb-10">
       Последние объявления
     </h1>
-    <div class="w-full flex gap-4 gap-y-10 flex-wrap mb-10">
-      <Announcement />
-      <Announcement />
-      <Announcement />
-      <Announcement />
-      <Announcement />
+    <div
+      v-if="data?.data && data.data?.length"
+      class="w-full flex gap-4 gap-y-10 flex-wrap mb-10"
+    >
+      <Announcement
+        v-for="item in data.data"
+        :key="item.id"
+        :announcement="item"
+      />
     </div>
     <div class="flex justify-center">
       <button

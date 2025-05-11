@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import GlassIcon from "@/shared/ui/Icons/GlassIcon.vue";
 import UserIcon from "@/shared/ui/Icons/UserIcon.vue";
-import { useUserSlice } from "@/entities/user";
+import type { User } from "@/entities/user";
 import { ShowCreateAnnouncementModalButton } from "@/features/createAnnouncement";
 
-const config = useRuntimeConfig();
+defineProps<{
+  user: User | null;
+}>();
 
-const { user } = storeToRefs(useUserSlice());
+const config = useRuntimeConfig();
 </script>
 
 <template>

@@ -11,7 +11,7 @@ import { CreateAnnouncementDto } from './dto/create-announcement.dto';
 import { JwtPayload } from '@/modules/auth/types/jwtPayload';
 import { AuthGuard } from '@/guards/auth.guard';
 
-@Controller('announcement')
+@Controller('announcements')
 export class AnnouncementController {
   constructor(private readonly announcementService: AnnouncementService) {}
 
