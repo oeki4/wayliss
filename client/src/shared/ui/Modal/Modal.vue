@@ -12,7 +12,7 @@ defineEmits<{
     <Transition name="modal">
       <div
         v-if="isOpen"
-        class="w-full px-4 h-dvh bg-black/70 flex justify-center items-center fixed z-1"
+        class="w-full px-4 h-dvh z-2 bg-black/70 flex justify-center items-center fixed"
         @click.self="$emit('onClose')"
       >
         <slot class="z-2" />
