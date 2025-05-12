@@ -42,7 +42,7 @@ const config = useRuntimeConfig();
           >О нас</NuxtLink
         >
       </div>
-      <ShowCreateAnnouncementModalButton />
+      <ShowCreateAnnouncementModalButton v-if="user" />
       <div class="flex w-min gap-4">
         <GlassIcon class="min-w-6 w-6 stroke-black cursor-pointer" />
         <NuxtImg

@@ -7,6 +7,13 @@ export const useCreateAnnouncementSlice = defineStore(
   () => {
     const config = useRuntimeConfig();
     const createAnnouncementModalIsOpen = ref(false);
+    const photos: Ref<
+      Array<{
+        file: File;
+        url: string;
+        progress: number;
+      }>
+    > = ref([]);
 
     const showCreateAnnouncementModal = () => {
       createAnnouncementModalIsOpen.value = true;
@@ -37,8 +44,37 @@ export const useCreateAnnouncementSlice = defineStore(
       });
     };
 
+    const uploadPhoto = (photo: File) => {
+      const xhr = new XMLHttpRequest();
+      xhr.upload.onprogress = function (e) {
+        console.log(`Отправлено ${e.loaded} из ${e.total} байт`);
+        const index = photos.value.findIndex(
+          (el) => el.file.name === photo.name,
+        );
+        photos.value[index].progress = Math.round((e.loaded / e.total) * 100);
+      };
+      const formData = new FormData();
+      formData.append("photo", photo);
+      xhr.open("POST", `${config.public.API_URL}/announcements/upload`);
+      xhr.send(formData);
+      xhr.onload = () => {
+        console.log("OK");
+      };
+    };
+
+    const addPhoto = (photo: { file: File; url: string }) => {
+      photos.value.push({ ...photo, progress: 0 });
+    };
+    const deletePhoto = (name: string) => {
+      photos.value = photos.value.filter((el) => el.file.name != name);
+    };
+
     return {
       showCreateAnnouncementModal,
+      uploadPhoto,
+      addPhoto,
+      deletePhoto,
+      photos,
       hideCreateAnnouncementModal,
       createAnnouncementModalIsOpen,
       createAnnouncement,

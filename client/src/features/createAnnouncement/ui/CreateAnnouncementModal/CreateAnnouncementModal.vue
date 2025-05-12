@@ -8,14 +8,20 @@ import { Field, useForm } from "vee-validate";
 import * as yup from "yup";
 import type { FetchError } from "ofetch";
 import { useAlertSlice } from "@/entities/alert";
+import CameraIcon from "@/shared/ui/Icons/CameraIcon.vue";
 
 const { setAlert } = useAlertSlice();
-const { createAnnouncementModalIsOpen: isOpen } = storeToRefs(
+const { createAnnouncementModalIsOpen: isOpen, photos } = storeToRefs(
   useCreateAnnouncementSlice(),
 );
 
-const { hideCreateAnnouncementModal, createAnnouncement } =
-  useCreateAnnouncementSlice();
+const {
+  hideCreateAnnouncementModal,
+  createAnnouncement,
+  uploadPhoto,
+  addPhoto,
+  deletePhoto,
+} = useCreateAnnouncementSlice();
 
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
@@ -25,6 +31,13 @@ const { errors, defineField, handleSubmit } = useForm({
 });
 const [title, titleAttrs] = defineField("title");
 const [description] = defineField("description");
+const sendPhoto = () => {
+  if (photos.value.length) {
+    photos.value.forEach((photo) => {
+      uploadPhoto(photo.file);
+    });
+  }
+};
 const onSubmit = handleSubmit(async (values) => {
   try {
     await createAnnouncement({
@@ -45,6 +58,28 @@ const onSubmit = handleSubmit(async (values) => {
     console.log(e);
   }
 });
+
+const onAddPhoto = (e: Event) => {
+  if (e?.target && (e.target as HTMLInputElement)?.files) {
+    const files = (e.target as HTMLInputElement)?.files;
+    if (!files?.[0]) return;
+    const file = files[0];
+    if (!file.type.startsWith("image/")) {
+      setAlert("Можно загружать только фото");
+      return;
+    }
+    if (!(file.size <= 2 * 1024 * 1024)) {
+      setAlert("Фото должно весить не более 1 Гб");
+      return;
+    }
+    if (photos.value.find((el) => el.file.name === file.name)) {
+      setAlert("Такое фото уже было загружено ранее");
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    addPhoto({ file, url });
+  }
+};
 </script>
 
 <template>
@@ -83,6 +118,56 @@ const onSubmit = handleSubmit(async (values) => {
             <OutlinedTextarea v-bind="field" id="description" />
           </Field>
         </div>
+        <div
+          class="w-full rounded-lg flex flex-wrap border-2 gap-2 border-gray-500 py-2 px-2"
+        >
+          <div
+            v-for="item in photos"
+            :key="item.file.lastModified"
+            class="w-[150px] h-24 relative"
+          >
+            <img
+              :src="item.url"
+              class="rounded-xl cursor-pointer hover:border-blue-600 border-blue-500 transition-all w-full h-full border-3 w-full"
+              alt="preview"
+              @click="deletePhoto(item.file.name)"
+            />
+            <div
+              class="py-1.5 bg-blue-500 absolute bottom-0 rounded-b-lg transition-all"
+              :style="[
+                `width: ${item.progress}%`,
+                `border-bottom-right-radius: ${item.progress > 95 ? '8px' : '0'}`,
+              ]"
+            />
+          </div>
+
+          <div
+            v-if="photos.length < 5"
+            class="flex flex-col w-[150px] items-center"
+          >
+            <label class="relative h-24 inline-block w-full">
+              <input
+                type="file"
+                class="absolute -z-1 opacity-0 block w-0 h-0"
+                @change="onAddPhoto"
+              />
+              <span
+                class="relative h-full flex items-center justify-center group w-full border-dashed cursor-pointer outline-0 decoration-0 text-sm align-middle text-blue-500 hover:text-blue-600 font-montserrat font-semibold text-center rounded-xl border-3 hover:border-blue-600 border-blue-500 px-5 py-2.5 box-border m-0 transition-all"
+              >
+                <CameraIcon
+                  class="w-10 relative inline-block group-hover:stroke-blue-600 stroke-blue-500 transition-all"
+                />
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <button
+          class="font-montserrat font-semibold cursor-pointer bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
+          @click="sendPhoto"
+        >
+          Отправить фото
+        </button>
         <button
           class="font-montserrat font-semibold cursor-pointer bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
           type="submit"
