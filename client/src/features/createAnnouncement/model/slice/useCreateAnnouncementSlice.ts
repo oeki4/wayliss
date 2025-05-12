@@ -59,6 +59,10 @@ export const useCreateAnnouncementSlice = defineStore(
       xhr.send(formData);
       xhr.onload = () => {
         console.log("OK");
+        const index = photos.value.findIndex(
+          (el) => el.file.name === photo.name,
+        );
+        photos.value[index].progress = 100;
       };
     };
 

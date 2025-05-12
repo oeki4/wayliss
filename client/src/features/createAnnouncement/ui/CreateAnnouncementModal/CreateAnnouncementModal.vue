@@ -9,6 +9,7 @@ import * as yup from "yup";
 import type { FetchError } from "ofetch";
 import { useAlertSlice } from "@/entities/alert";
 import CameraIcon from "@/shared/ui/Icons/CameraIcon.vue";
+import CheckMarkIcon from "@/shared/ui/Icons/CheckMarkIcon.vue";
 
 const { setAlert } = useAlertSlice();
 const { createAnnouncementModalIsOpen: isOpen, photos } = storeToRefs(
@@ -124,13 +125,12 @@ const onAddPhoto = (e: Event) => {
           <div
             v-for="item in photos"
             :key="item.file.lastModified"
-            class="w-[150px] h-24 relative"
+            class="w-[150px] h-24 relative group"
           >
             <img
               :src="item.url"
-              class="rounded-xl cursor-pointer hover:border-blue-600 border-blue-500 transition-all w-full h-full border-3 w-full"
+              class="rounded-xl cursor-pointer hover:border-blue-600 border-blue-500 transition-all w-full h-full border-3"
               alt="preview"
-              @click="deletePhoto(item.file.name)"
             />
             <div
               class="py-1.5 bg-blue-500 absolute bottom-0 rounded-b-lg transition-all"
@@ -139,6 +139,32 @@ const onAddPhoto = (e: Event) => {
                 `border-bottom-right-radius: ${item.progress > 95 ? '8px' : '0'}`,
               ]"
             />
+            <div
+              v-if="!(item.progress === 100)"
+              class="w-full h-full transition-all flex flex-col justify-center items-center group-hover:bg-gray-700/70 cursor-pointer absolute top-0 left-0 rounded-xl"
+              @click="deletePhoto(item.file.name)"
+            >
+              <CrossIcon
+                class="group-hover:opacity-100 opacity-0 fill-gray-300 stroke-gray-300 rounded-lg transition-all w-10"
+              />
+              <p
+                class="group-hover:opacity-100 opacity-0 font-montserrat font-bold text-gray-300 transition-all"
+              >
+                Удалить
+              </p>
+            </div>
+            <div
+              v-if="item.progress === 100"
+              class="w-full h-full transition-all flex flex-col justify-center items-center bg-gray-700/70 cursor-pointer absolute top-0 left-0 rounded-xl"
+              @click="deletePhoto(item.file.name)"
+            >
+              <CheckMarkIcon
+                class="fill-gray-300 rounded-lg transition-all w-10"
+              />
+              <p class="font-montserrat font-bold text-gray-300 transition-all">
+                Загружено
+              </p>
+            </div>
           </div>
 
           <div
