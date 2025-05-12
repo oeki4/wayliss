@@ -35,7 +35,7 @@ if (token.value) {
 
 <template>
   <div>
-    <Header :user="user" />
+    <Header :user="userSlice.user || user" />
     <section class="min-h-[calc(100vh-200px)]">
       <slot />
       <CreateAnnouncementModal />

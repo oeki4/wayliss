@@ -11,7 +11,7 @@ const { setAlert } = alertStore;
     <Transition name="alert">
       <div
         v-if="!!text"
-        class="fixed w-[300px] cursor-pointer px-3 py-2 rounded-lg right-10 bottom-5"
+        class="fixed w-[300px] z-100 cursor-pointer px-3 py-2 rounded-lg right-10 bottom-5"
         :class="[
           { 'bg-green-400': status === 'success' },
           { 'bg-red-400': status === 'error' },

@@ -22,9 +22,10 @@ const {
   uploadPhoto,
   addPhoto,
   deletePhoto,
+  clearPhotos,
 } = useCreateAnnouncementSlice();
 
-const { errors, defineField, handleSubmit } = useForm({
+const { errors, defineField, handleSubmit, resetForm } = useForm({
   validationSchema: yup.object({
     title: yup.string().required("Заголовок обязателен для заполнения"),
     description: yup.string().required("Описание обязательно для заполнения"),
@@ -32,21 +33,18 @@ const { errors, defineField, handleSubmit } = useForm({
 });
 const [title, titleAttrs] = defineField("title");
 const [description] = defineField("description");
-const sendPhoto = () => {
-  if (photos.value.length) {
-    photos.value.forEach((photo) => {
-      uploadPhoto(photo.file);
-    });
-  }
-};
 const onSubmit = handleSubmit(async (values) => {
   try {
-    await createAnnouncement({
+    const announcement = await createAnnouncement({
       description: values.description,
       title: values.title,
     });
-    hideCreateAnnouncementModal();
+    for (const photo of photos.value) {
+      await uploadPhoto(photo.file, announcement.data.id);
+    }
     setAlert("Вы успешно создали объявление!");
+    clearPhotos();
+    resetForm();
   } catch (e) {
     if (e instanceof Error) {
       const error = e as FetchError;
@@ -119,6 +117,7 @@ const onAddPhoto = (e: Event) => {
             <OutlinedTextarea v-bind="field" id="description" />
           </Field>
         </div>
+        <p class="font-montserrat text-md">Изображения для объявления</p>
         <div
           class="w-full rounded-lg flex flex-wrap border-2 gap-2 border-gray-500 py-2 px-2"
         >
@@ -187,13 +186,6 @@ const onAddPhoto = (e: Event) => {
             </label>
           </div>
         </div>
-
-        <button
-          class="font-montserrat font-semibold cursor-pointer bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
-          @click="sendPhoto"
-        >
-          Отправить фото
-        </button>
         <button
           class="font-montserrat font-semibold cursor-pointer bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
           type="submit"

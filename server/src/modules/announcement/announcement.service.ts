@@ -3,6 +3,8 @@ import { CreateAnnouncementDto } from './dto/create-announcement.dto';
 import { PrismaService } from '@/modules/app/prisma.service';
 import { JwtPayload } from '@/modules/auth/types/jwtPayload';
 import { ErrorCodes } from '@/shared/const/errorCodes';
+import * as fs from 'node:fs';
+import { randomString } from '@/shared/utils/randomString';
 
 @Injectable()
 export class AnnouncementService {
@@ -36,11 +38,38 @@ export class AnnouncementService {
         orderBy: {
           createdAt: 'desc',
         },
+        include: {
+          AnnouncementPhoto: true,
+        },
       });
 
       return {
         success: true,
         data: announcements,
+      };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        'Internal server error',
+        ErrorCodes.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async uploadPhoto(photo: Express.Multer.File, announcementId: number) {
+    try {
+      const extension = photo.originalname.match(/\.([^.]+)$/)?.[1];
+      const randomName = randomString();
+      fs.writeFileSync(`./uploads/${randomName}.${extension}`, photo.buffer);
+      const announcementPhoto = await this.prisma.announcementPhoto.create({
+        data: {
+          name: `${randomName}.${extension}`,
+          announcementId,
+        },
+      });
+      return {
+        success: true,
+        data: announcementPhoto,
       };
     } catch (e) {
       console.log(e);

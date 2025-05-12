@@ -16,6 +16,7 @@ import { JwtPayload } from '@/modules/auth/types/jwtPayload';
 import { AuthGuard } from '@/guards/auth.guard';
 import { ErrorCodes } from '@/shared/const/errorCodes';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadPhotoDto } from '@/modules/announcement/dto/upload-photo.dto';
 
 @Controller('announcements')
 export class AnnouncementController {
@@ -38,6 +39,7 @@ export class AnnouncementController {
   @Post('/upload')
   @UseInterceptors(FileInterceptor('photo'))
   uploadPhoto(
+    @Body() uploadPhotoDto: UploadPhotoDto,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({
@@ -56,9 +58,11 @@ export class AnnouncementController {
           },
         }),
     )
-    photo?: Express.Multer.File,
+    photo: Express.Multer.File,
   ) {
-    console.log(photo);
-    return { ok: true };
+    return this.announcementService.uploadPhoto(
+      photo,
+      uploadPhotoDto.announcementId,
+    );
   }
 }

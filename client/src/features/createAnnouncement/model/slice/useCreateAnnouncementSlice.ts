@@ -12,11 +12,16 @@ export const useCreateAnnouncementSlice = defineStore(
         file: File;
         url: string;
         progress: number;
+        loaded: boolean;
       }>
     > = ref([]);
 
     const showCreateAnnouncementModal = () => {
       createAnnouncementModalIsOpen.value = true;
+    };
+
+    const clearPhotos = () => {
+      photos.value = [];
     };
 
     const hideCreateAnnouncementModal = () => {
@@ -44,30 +49,47 @@ export const useCreateAnnouncementSlice = defineStore(
       });
     };
 
-    const uploadPhoto = (photo: File) => {
-      const xhr = new XMLHttpRequest();
-      xhr.upload.onprogress = function (e) {
-        console.log(`Отправлено ${e.loaded} из ${e.total} байт`);
-        const index = photos.value.findIndex(
-          (el) => el.file.name === photo.name,
-        );
-        photos.value[index].progress = Math.round((e.loaded / e.total) * 100);
-      };
-      const formData = new FormData();
-      formData.append("photo", photo);
-      xhr.open("POST", `${config.public.API_URL}/announcements/upload`);
-      xhr.send(formData);
-      xhr.onload = () => {
-        console.log("OK");
-        const index = photos.value.findIndex(
-          (el) => el.file.name === photo.name,
-        );
-        photos.value[index].progress = 100;
-      };
+    const uploadPhoto = (photo: File, announcementId: number) => {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.upload.onprogress = function (e) {
+          console.log(`Отправлено ${e.loaded} из ${e.total} байт`);
+          const index = photos.value.findIndex(
+            (el) => el.file.name === photo.name,
+          );
+          photos.value[index].progress = Math.round((e.loaded / e.total) * 100);
+        };
+        const formData = new FormData();
+        formData.append("photo", photo);
+        formData.append("announcementId", announcementId.toString());
+        xhr.open("POST", `${config.public.API_URL}/announcements/upload`);
+        xhr.send(formData);
+        xhr.onload = () => {
+          try {
+            const res = JSON.parse(xhr.response);
+            if (res?.success) {
+              const index = photos.value.findIndex(
+                (el) => el.file.name === photo.name,
+              );
+              if (index === -1) return;
+              photos.value[index].progress = 100;
+              photos.value[index].loaded = true;
+              resolve(null);
+            }
+          } catch (e) {
+            console.log(e);
+            reject(null);
+          }
+        };
+
+        xhr.onerror = () => {
+          reject(null);
+        };
+      });
     };
 
     const addPhoto = (photo: { file: File; url: string }) => {
-      photos.value.push({ ...photo, progress: 0 });
+      photos.value.push({ ...photo, progress: 0, loaded: false });
     };
     const deletePhoto = (name: string) => {
       photos.value = photos.value.filter((el) => el.file.name != name);
@@ -78,6 +100,7 @@ export const useCreateAnnouncementSlice = defineStore(
       uploadPhoto,
       addPhoto,
       deletePhoto,
+      clearPhotos,
       photos,
       hideCreateAnnouncementModal,
       createAnnouncementModalIsOpen,

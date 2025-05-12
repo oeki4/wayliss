@@ -4,6 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { AnnouncementModule } from '@/modules/announcement/announcement.module';
+import * as path from 'node:path';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -13,6 +15,9 @@ import { AnnouncementModule } from '@/modules/announcement/announcement.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.${process.env.NODE_ENV}.env`,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: path.resolve('uploads'),
     }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
