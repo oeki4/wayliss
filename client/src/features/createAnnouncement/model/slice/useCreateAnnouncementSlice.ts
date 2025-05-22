@@ -7,6 +7,7 @@ export const useCreateAnnouncementSlice = defineStore(
   () => {
     const config = useRuntimeConfig();
     const createAnnouncementModalIsOpen = ref(false);
+    const createdAnnouncement: Ref<IAnnouncement | null> = ref(null);
     const photos: Ref<
       Array<{
         file: File;
@@ -18,6 +19,10 @@ export const useCreateAnnouncementSlice = defineStore(
 
     const showCreateAnnouncementModal = () => {
       createAnnouncementModalIsOpen.value = true;
+    };
+
+    const setCreatedAnnouncement = (payload: IAnnouncement) => {
+      createdAnnouncement.value = payload;
     };
 
     const clearPhotos = () => {
@@ -74,16 +79,24 @@ export const useCreateAnnouncementSlice = defineStore(
               if (index === -1) return;
               photos.value[index].progress = 100;
               photos.value[index].loaded = true;
-              resolve(null);
+              resolve({ success: true });
+            } else {
+              const index = photos.value.findIndex(
+                (el) => el.file.name === photo.name,
+              );
+              if (index === -1) return;
+              photos.value[index].progress = 0;
+              photos.value[index].loaded = false;
+              reject({ success: false });
             }
           } catch (e) {
             console.log(e);
-            reject(null);
+            reject({ success: false });
           }
         };
 
         xhr.onerror = () => {
-          reject(null);
+          reject({ success: false });
         };
       });
     };
@@ -99,7 +112,9 @@ export const useCreateAnnouncementSlice = defineStore(
       showCreateAnnouncementModal,
       uploadPhoto,
       addPhoto,
+      setCreatedAnnouncement,
       deletePhoto,
+      createdAnnouncement,
       clearPhotos,
       photos,
       hideCreateAnnouncementModal,

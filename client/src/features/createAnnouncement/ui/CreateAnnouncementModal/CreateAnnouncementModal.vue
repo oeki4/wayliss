@@ -12,13 +12,16 @@ import CameraIcon from "@/shared/ui/Icons/CameraIcon.vue";
 import CheckMarkIcon from "@/shared/ui/Icons/CheckMarkIcon.vue";
 
 const { setAlert } = useAlertSlice();
-const { createAnnouncementModalIsOpen: isOpen, photos } = storeToRefs(
-  useCreateAnnouncementSlice(),
-);
+const {
+  createAnnouncementModalIsOpen: isOpen,
+  photos,
+  createdAnnouncement,
+} = storeToRefs(useCreateAnnouncementSlice());
 
 const {
   hideCreateAnnouncementModal,
   createAnnouncement,
+  setCreatedAnnouncement,
   uploadPhoto,
   addPhoto,
   deletePhoto,
@@ -35,13 +38,30 @@ const [title, titleAttrs] = defineField("title");
 const [description] = defineField("description");
 const onSubmit = handleSubmit(async (values) => {
   try {
-    const announcement = await createAnnouncement({
-      description: values.description,
-      title: values.title,
-    });
-    for (const photo of photos.value) {
-      await uploadPhoto(photo.file, announcement.data.id);
+    // Объявление было создано, но не все фото загружены успешно
+    if (createdAnnouncement.value) {
+      for (const photo of photos.value) {
+        if (!photo.loaded) {
+          await uploadPhoto(photo.file, createdAnnouncement.value.id);
+        }
+      }
+    } else {
+      // Объявление ещё не создано
+      const announcement = await createAnnouncement({
+        description: values.description,
+        title: values.title,
+      });
+      if (!announcement.data) {
+        setAlert("Ошибка при создании объявления!", "error");
+        return;
+      }
+      setCreatedAnnouncement(announcement.data);
+      if (!createdAnnouncement.value) return;
+      for (const photo of photos.value) {
+        await uploadPhoto(photo.file, createdAnnouncement.value.id);
+      }
     }
+
     setAlert("Вы успешно создали объявление!");
     clearPhotos();
     resetForm();
@@ -130,7 +150,7 @@ const onAddPhoto = (e: Event) => {
               :src="item.url"
               class="rounded-xl cursor-pointer hover:border-blue-600 border-blue-500 transition-all w-full h-full border-3"
               alt="preview"
-            />
+            />>
             <div
               class="py-1.5 bg-blue-500 absolute bottom-0 rounded-b-lg transition-all"
               :style="[
@@ -174,8 +194,7 @@ const onAddPhoto = (e: Event) => {
               <input
                 type="file"
                 class="absolute -z-1 opacity-0 block w-0 h-0"
-                @change="onAddPhoto"
-              />
+                @change="onAddPhoto"              />/>
               <span
                 class="relative h-full flex items-center justify-center group w-full border-dashed cursor-pointer outline-0 decoration-0 text-sm align-middle text-blue-500 hover:text-blue-600 font-montserrat font-semibold text-center rounded-xl border-3 hover:border-blue-600 border-blue-500 px-5 py-2.5 box-border m-0 transition-all"
               >
