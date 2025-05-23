@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { IAnnouncement } from "@/entities/announcement";
 import { DateTime } from "luxon";
-import { Carousel, Pagination, Slide } from "vue3-carousel";
-import "vue3-carousel/carousel.css";
 const config = useRuntimeConfig();
 
 defineProps<{
@@ -15,10 +13,10 @@ const carouselConfig = {
   wrapAround: true,
 };
 </script>
-
 <template>
-  <div
-    class="w-full sm:w-48/100 lg:w-32/100 xl:w-24/100 flex flex-col gap-3 cursor-pointer"
+  <NuxtLink
+    :href="`/announcement/${announcement.id}`"
+    class="w-full announcement sm:w-48/100 lg:w-32/100 xl:w-24/100 flex flex-col gap-3 cursor-pointer"
     @click="$emit('onclick')"
   >
     <Carousel
@@ -61,17 +59,18 @@ const carouselConfig = {
         }}
       </p>
     </div>
-  </div>
+  </NuxtLink>
 </template>
 <style>
-.carousel__pagination-button {
+.announcement .carousel__pagination-button {
   border-radius: 100%;
+  opacity: 60%;
   height: 10px;
   width: 10px;
   background-color: white;
 }
 
-.carousel__pagination-button--active {
+.announcement .carousel__pagination-button--active {
   background-color: #9b9b9b;
 }
 </style>

@@ -150,7 +150,7 @@ const onAddPhoto = (e: Event) => {
               :src="item.url"
               class="rounded-xl cursor-pointer hover:border-blue-600 border-blue-500 transition-all w-full h-full border-3"
               alt="preview"
-            />>
+            />
             <div
               class="py-1.5 bg-blue-500 absolute bottom-0 rounded-b-lg transition-all"
               :style="[
@@ -194,7 +194,8 @@ const onAddPhoto = (e: Event) => {
               <input
                 type="file"
                 class="absolute -z-1 opacity-0 block w-0 h-0"
-                @change="onAddPhoto"              />/>
+                @change="onAddPhoto"
+              />
               <span
                 class="relative h-full flex items-center justify-center group w-full border-dashed cursor-pointer outline-0 decoration-0 text-sm align-middle text-blue-500 hover:text-blue-600 font-montserrat font-semibold text-center rounded-xl border-3 hover:border-blue-600 border-blue-500 px-5 py-2.5 box-border m-0 transition-all"
               >

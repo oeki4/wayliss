@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpException,
+  Param,
   ParseFilePipeBuilder,
   Post,
   Request,
@@ -36,6 +37,10 @@ export class AnnouncementController {
     return this.announcementService.getLastAnnouncements();
   }
 
+  @Get('/:id')
+  getAnnouncement(@Param('id') id: number) {
+    return this.announcementService.getAnnouncement(id);
+  }
   @Post('/upload')
   @UseInterceptors(FileInterceptor('photo'))
   uploadPhoto(

@@ -8,7 +8,13 @@ export default defineNuxtConfig({
   alias: {
     "@": "../src",
   },
-  modules: ["@nuxt/eslint", "@nuxt/fonts", "@pinia/nuxt", "@nuxt/image"],
+  modules: [
+    "@nuxt/eslint",
+    "@nuxt/fonts",
+    "@pinia/nuxt",
+    "@nuxt/image",
+    "vue3-carousel-nuxt",
+  ],
   css: ["./src/app/assets/css/reset.css", "./src/app/assets/css/main.css"],
   dir: {
     pages: "./src/app/routes",

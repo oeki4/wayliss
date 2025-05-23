@@ -32,12 +32,51 @@ export class AnnouncementService {
     }
   }
 
+  async getAnnouncement(id: number) {
+    if (!id) {
+      return {
+        success: true,
+        data: null,
+      };
+    }
+
+    try {
+      const announcement = await this.prisma.announcement.findFirst({
+        where: {
+          id,
+        },
+        include: {
+          AnnouncementPhoto: true,
+          User: {
+            select: {
+              id: true,
+              firstName: true,
+              avatar: true,
+            },
+          },
+        },
+      });
+
+      return {
+        success: true,
+        data: announcement,
+      };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        'Internal server error',
+        ErrorCodes.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async getLastAnnouncements() {
     try {
       const announcements = await this.prisma.announcement.findMany({
         orderBy: {
           createdAt: 'desc',
         },
+        take: 8,
         include: {
           AnnouncementPhoto: true,
         },
