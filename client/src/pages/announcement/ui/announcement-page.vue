@@ -90,7 +90,7 @@ if (!data.value?.data) {
         </div>
 
         <button
-          class="bg-blue-500 hover:bg-blue-600 whitespace-nowrap cursor-pointer transition-all font-montserrat text-white font-bold py-6 px-4 rounded-lg"
+          class="bg-blue-500 hover:bg-blue-600 whitespace-nowrap cursor-pointer transition-all font-montserrat text-white font-bold py-4 px-4 rounded-lg"
         >
           Отозваться на объявление
         </button>

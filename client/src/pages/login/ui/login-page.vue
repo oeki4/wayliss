@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { LoginForm } from "@/features/login";
+import type { User } from "@/entities/user";
+
+const props = defineProps<{
+  user: User | null;
+}>();
+
+if (props.user) navigateTo("/");
 
 useSeoMeta({
   title: `Wayliss - Авторизация`,

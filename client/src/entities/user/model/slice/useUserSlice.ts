@@ -3,7 +3,7 @@ import type { ServerResponse } from "@/shared/types/serverResponse";
 
 export const useUserSlice = defineStore("user", () => {
   const user: Ref<User | null> = ref(null);
-  const setUser = (payload: User) => {
+  const setUser = (payload: User | null) => {
     user.value = payload;
   };
 

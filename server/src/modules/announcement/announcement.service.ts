@@ -32,6 +32,34 @@ export class AnnouncementService {
     }
   }
 
+  async getAnnouncementsOnAccount(userId: number) {
+    try {
+      const announcements = await this.prisma.announcement.findMany({
+        where: {
+          userId,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: 12,
+        include: {
+          AnnouncementPhoto: true,
+        },
+      });
+
+      return {
+        success: true,
+        data: announcements,
+      };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        'Internal server error',
+        ErrorCodes.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async getAnnouncement(id: number) {
     if (!id) {
       return {

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Modal from "@/shared/ui/Modal/Modal.vue";
 import { useCreateAnnouncementSlice } from "../../model/slice/useCreateAnnouncementSlice";
 import OutlinedInput from "@/shared/ui/Input/OutlinedInput.vue";
 import CrossIcon from "@/shared/ui/Icons/CrossIcon.vue";
@@ -60,7 +59,7 @@ const onSubmit = handleSubmit(async (values) => {
       setCreatedAnnouncement(announcement.data);
       if (!createdAnnouncement.value) return;
       for (const photo of photos.value) {
-        await uploadPhoto(photo.file, createdAnnouncement.value.id);
+        await uploadPhoto(photo.file, announcement.data.id);
       }
     }
 

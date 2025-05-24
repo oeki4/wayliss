@@ -37,6 +37,14 @@ export class AnnouncementController {
     return this.announcementService.getLastAnnouncements();
   }
 
+  @UseGuards(AuthGuard)
+  @Get('/account')
+  getAnnouncementsOnAccount(
+    @Request() request: Request & { user: JwtPayload },
+  ) {
+    return this.announcementService.getAnnouncementsOnAccount(request.user.sub);
+  }
+
   @Get('/:id')
   getAnnouncement(@Param('id') id: number) {
     return this.announcementService.getAnnouncement(id);
