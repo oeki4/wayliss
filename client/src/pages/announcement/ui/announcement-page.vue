@@ -36,6 +36,13 @@ if (!data.value?.data) {
   navigateTo("/");
 } else {
   announcement.value = data.value?.data;
+
+  useSeoMeta({
+    title: `Wayliss | ${announcement.value.title.slice(0, 32)} ${announcement.value.title.length > 32 ? "..." : ""}`,
+    ogTitle: `Wayliss | ${announcement.value.title.slice(0, 32)} ${announcement.value.title.length > 32 ? "..." : ""}`,
+    description: announcement.value.description,
+    ogDescription: announcement.value.description,
+  });
 }
 </script>
 
@@ -45,7 +52,7 @@ if (!data.value?.data) {
       <Carousel
         v-if="
           announcement?.AnnouncementPhoto?.length &&
-          announcement?.AnnouncementPhoto?.length > 1
+          announcement?.AnnouncementPhoto?.length > 0
         "
         class="z-10 max-w-4xl w-full"
         v-bind="carouselConfig"
@@ -62,17 +69,28 @@ if (!data.value?.data) {
           <Navigation />
         </template>
       </Carousel>
-      <div>
-        <div class="flex items-center gap-4">
-          <NuxtImg
-            class="rounded-full w-15 min-w-15 h-15"
-            :src="`${config.public.API_URL}/users/${announcement?.User.id}/avatar`"
-          />
-          <p>{{ announcement?.User.firstName }}</p>
+      <div
+        v-else
+        class="h-70 lg:h-110 max-w-4xl w-full bg-gray-200 rounded-lg"
+      />
+      <div
+        class="flex lg:flex-col flex-wrap w-full lg:w-auto justify-between items-end lg:items-start gap-4"
+      >
+        <div class="flex flex-col gap-4">
+          <h3 class="font-montserrat font-medium">Опубликовал:</h3>
+          <div class="flex items-center gap-4">
+            <NuxtImg
+              class="rounded-full w-15 min-w-15 h-15"
+              :src="`${config.public.API_URL}/users/${announcement?.User.id}/avatar`"
+            />
+            <p class="font-montserrat font-medium">
+              {{ announcement?.User.firstName }}
+            </p>
+          </div>
         </div>
 
         <button
-          class="bg-blue-500 hover:bg-blue-600 cursor-pointer transition-all font-montserrat text-white font-bold py-4 px-8 rounded-lg"
+          class="bg-blue-500 hover:bg-blue-600 whitespace-nowrap cursor-pointer transition-all font-montserrat text-white font-bold py-6 px-4 rounded-lg"
         >
           Отозваться на объявление
         </button>
@@ -80,11 +98,11 @@ if (!data.value?.data) {
     </div>
     <div class="flex max-w-4xl flex-col gap-4">
       <div class="flex w-full justify-between">
-        <h1 class="text-2xl lg:text-3xl font-montserrat font-medium">
+        <h1 class="text-xl lg:text-2xl font-montserrat font-medium">
           {{ data?.data?.title }}
         </h1>
       </div>
-      <p class="leading-6 text-base lg:text-lg">
+      <p class="leading-6 text-sm font-montserrat lg:text-base">
         {{ data?.data?.description }}
       </p>
     </div>

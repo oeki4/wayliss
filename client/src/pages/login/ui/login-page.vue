@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { LoginForm } from "@/features/login";
+
+useSeoMeta({
+  title: `Wayliss - Авторизация`,
+  ogTitle: `Wayliss - Авторизация`,
+  description: `Wayliss - Авторизация`,
+  ogDescription: `Wayliss - Авторизация`,
+});
 </script>
 
 <template>

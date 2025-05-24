@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { RegisterForm } from "@/features/register";
+
+useSeoMeta({
+  title: `Wayliss - Регистрация`,
+  ogTitle: `Wayliss - Регистрация`,
+  description: `Wayliss - Регистрация`,
+  ogDescription: `Wayliss - Регистрация`,
+});
 </script>
 
 <template>

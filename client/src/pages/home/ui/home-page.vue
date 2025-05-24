@@ -21,6 +21,13 @@ if (error.value?.data?.code === 500) {
 if (data.value) {
   setAnnouncements(data.value.data);
 }
+
+useSeoMeta({
+  title: `Wayliss - Объявления`,
+  ogTitle: `Wayliss - Объявления`,
+  description: `Wayliss - Объявления`,
+  ogDescription: `Wayliss - Объявления`,
+});
 </script>
 
 <template>

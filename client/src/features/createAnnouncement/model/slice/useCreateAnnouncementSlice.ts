@@ -33,6 +33,10 @@ export const useCreateAnnouncementSlice = defineStore(
       createAnnouncementModalIsOpen.value = false;
     };
 
+    const setCreateAnnouncementModal = (payload: boolean) => {
+      createAnnouncementModalIsOpen.value = payload;
+    };
+
     const createAnnouncement = ({
       title,
       description,
@@ -118,6 +122,7 @@ export const useCreateAnnouncementSlice = defineStore(
       clearPhotos,
       photos,
       hideCreateAnnouncementModal,
+      setCreateAnnouncementModal,
       createAnnouncementModalIsOpen,
       createAnnouncement,
     };
