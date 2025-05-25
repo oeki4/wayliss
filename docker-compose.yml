@@ -1,4 +1,17 @@
 services:
+  nginx:
+    image: nginx:alpine3.20
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/wayliss.crt:/etc/ssl/certs/wayliss.crt
+      - ./docker/wayliss.key:/etc/ssl/private/wayliss.key
+      - ./:/var/www/html
+    networks:
+      - proxy
+
   postgres:
     image: postgres:16
     environment:
@@ -6,7 +19,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "55432:5432"
+      - "55532:5432"
     networks:
       - db
     healthcheck:
@@ -19,22 +32,38 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-      target: deploy
     container_name: backend
     env_file:
       /server/.env
     depends_on:
       - postgres
     ports:
-      - '3000:3000'
+      - '3005:3005'
     networks:
       - db
+      - proxy
     command: >
       sh -c "
         npx prisma migrate deploy &&
         node dist/main.js
       "
 
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: frontend
+    volumes:
+      - ./client/src:/app/src
+    env_file:
+      /client/.env
+    ports:
+      - '3000:3000'
+    networks:
+      - proxy
+
 networks:
   db:
+    driver: bridge
+  proxy:
     driver: bridge

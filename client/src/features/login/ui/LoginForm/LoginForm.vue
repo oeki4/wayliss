@@ -34,7 +34,6 @@ const onSubmit = handleSubmit(async (values) => {
 
     token.value = res.data.token;
     setAlert("Авторизация прошла успешно!");
-    reloadNuxtApp();
   } catch (e) {
     if (e instanceof Error) {
       const error = e as FetchError;
@@ -54,6 +53,7 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     const res = await fetchProfile(token.value);
     setUser(res.data);
+    reloadNuxtApp();
   } catch (e) {
     if (e instanceof Error) {
       const error = e as FetchError;

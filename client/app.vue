@@ -11,6 +11,8 @@ const config = useRuntimeConfig();
 
 const user: Ref<User | null> = ref(null);
 
+console.log(token.value);
+
 if (token.value) {
   const { data, error } = await useFetch<ServerResponse<User>>(
     "/auth/profile",
@@ -19,6 +21,9 @@ if (token.value) {
       headers: { Authorization: `Bearer ${token.value}` },
     },
   );
+
+  console.log(data.value);
+  console.log(error.value);
   if (error.value?.data?.code === 3) {
     setAlert("Сессия устарела. Авторизуйтесь, пожалуйста");
     token.value = undefined;

@@ -29,7 +29,10 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-  app.enableCors();
+  app.enableCors({
+    origin: '*',
+    credentials: true,
+  });
 
   if (!fs.existsSync(path.resolve('uploads'))) {
     try {

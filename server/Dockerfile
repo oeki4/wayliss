@@ -15,9 +15,6 @@ COPY . .
 RUN npm run prisma:generate
 RUN npm run build
 
-# Expose the application port
-EXPOSE 3000
-
 FROM node:22.16.0-alpine AS deploy
 
 WORKDIR /app
@@ -28,4 +25,6 @@ COPY --from=build /app/dist/ ./dist/
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/generated ./generated/
 
-CMD [ "node", "dist/main.js" ]
+EXPOSE 3005
+
+CMD ["node", "dist/main.js"]
