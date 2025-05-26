@@ -6,7 +6,6 @@ import { useAlertSlice } from "@/entities/alert";
 import { FetchError } from "ofetch";
 const { setAlert } = useAlertSlice();
 const { setAnnouncements } = useAnnouncementSlice();
-const { announcements } = storeToRefs(useAnnouncementSlice());
 const config = useRuntimeConfig();
 
 const { data } = await useAsyncData("lastAnnouncements", async () => {
@@ -44,15 +43,8 @@ useSeoMeta({
     <h1 class="text-3xl font-montserrat font-medium mb-10">
       Последние объявления
     </h1>
-    <div
-      v-if="announcements.length"
-      class="w-full flex gap-4 gap-y-10 flex-wrap mb-10"
-    >
-      <Announcement
-        v-for="item in announcements"
-        :key="item.id"
-        :announcement="item"
-      />
+    <div v-if="data?.length" class="w-full flex gap-4 gap-y-10 flex-wrap mb-10">
+      <Announcement v-for="item in data" :key="item.id" :announcement="item" />
     </div>
     <div class="flex justify-center">
       <button

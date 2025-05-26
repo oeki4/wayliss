@@ -56,13 +56,12 @@ if (data.value) {
     <div class="flex w-full flex-col lg:flex-row gap-6 items-start mb-4">
       <Carousel
         v-if="
-          announcement?.AnnouncementPhoto?.length &&
-          announcement?.AnnouncementPhoto?.length > 0
+          data?.AnnouncementPhoto?.length && data?.AnnouncementPhoto?.length > 0
         "
         class="z-10 max-w-4xl w-full"
         v-bind="carouselConfig"
       >
-        <Slide v-for="item in announcement.AnnouncementPhoto" :key="item.id">
+        <Slide v-for="item in data.AnnouncementPhoto" :key="item.id">
           <NuxtImg
             :src="`${config.public.STATIC_URL}/${item.name}`"
             alt="announcement photo"
@@ -104,11 +103,11 @@ if (data.value) {
     <div class="flex max-w-4xl flex-col gap-4">
       <div class="flex w-full justify-between">
         <h1 class="text-xl lg:text-2xl font-montserrat font-medium">
-          {{ data?.data?.title }}
+          {{ data?.title }}
         </h1>
       </div>
       <p class="leading-6 text-sm font-montserrat lg:text-base">
-        {{ data?.data?.description }}
+        {{ data?.description }}
       </p>
     </div>
   </section>
