@@ -3,14 +3,13 @@ services:
     image: nginx:alpine3.20
     ports:
       - '80:80'
-      - '443:443'
     volumes:
       - ./docker/nginx.conf:/etc/nginx/nginx.conf
       - ./docker/wayliss.crt:/etc/ssl/certs/wayliss.crt
       - ./docker/wayliss.key:/etc/ssl/private/wayliss.key
       - ./:/var/www/html
     networks:
-      - proxy
+      - web
 
   postgres:
     image: postgres:16
@@ -38,10 +37,12 @@ services:
     depends_on:
       - postgres
     ports:
-      - '3005:3005'
+      - '3001:3001'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - db
-      - proxy
+      - web
     command: >
       sh -c "
         npx prisma migrate deploy &&
@@ -60,10 +61,10 @@ services:
     ports:
       - '3000:3000'
     networks:
-      - proxy
+      - web
 
 networks:
   db:
     driver: bridge
-  proxy:
+  web:
     driver: bridge

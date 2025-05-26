@@ -11,29 +11,34 @@ const { setAlert } = useAlertSlice();
 const props = defineProps<{
   user: User | null;
 }>();
-
 const announcements: Ref<IAnnouncement[] | null> = ref(null);
 
 if (!props.user) navigateTo("/login");
 const token = useCookie(AUTH_TOKEN);
 const config = useRuntimeConfig();
 
-const { data, error } = await useFetch<ServerResponse<IAnnouncement[]>>(
-  "/announcements/account",
-  {
-    baseURL: config.public.API_URL,
-    headers: {
-      authorization: `Bearer ${token.value}`,
-    },
-  },
-);
+const { data } = await useAsyncData("accountAnnouncements", async () => {
+  try {
+    const response = await $fetch<ServerResponse<IAnnouncement[]>>(
+      "/announcements/account",
+      {
+        baseURL: import.meta.server
+          ? config.SSR_API_URL
+          : config.public.API_URL,
+        headers: {
+          authorization: `Bearer ${token.value}`,
+        },
+      },
+    );
 
-if (error.value) {
-  setAlert("Ошибка при загрузке ваших объявлений");
-}
+    return response.data;
+  } catch {
+    setAlert("Ошибка при загрузке ваших объявлений");
+  }
+});
 
-if (data?.value?.data) {
-  announcements.value = data?.value?.data;
+if (data?.value) {
+  announcements.value = data?.value;
 }
 </script>
 

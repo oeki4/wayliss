@@ -19,23 +19,28 @@ if (!route.params.id) {
 
 const announcement: Ref<(IAnnouncement & { User: Profile }) | null> = ref(null);
 
-const { data, error } = await useFetch<
-  ServerResponse<IAnnouncement & { User: Profile }>
->(`/announcements/${route.params.id}`, {
-  baseURL: config.public.API_URL,
+const { data } = await useAsyncData("announcementItem", async () => {
+  try {
+    const response = await $fetch<
+      ServerResponse<IAnnouncement & { User: Profile }>
+    >(`/announcements/${route.params.id}`, {
+      baseURL: import.meta.server ? config.SSR_API_URL : config.public.API_URL,
+    });
+
+    if (!response.success || !response.data) {
+      navigateTo("/");
+      setAlert("Произошла ошибка при загрузке объявления");
+    }
+
+    return response.data;
+  } catch {
+    navigateTo("/");
+    setAlert("Произошла ошибка при загрузке объявления");
+    return;
+  }
 });
-if (!data.value?.success) {
-  navigateTo("/");
-  setAlert("Произошла ошибка при загрузке объявления");
-}
-if (error.value) {
-  navigateTo("/");
-  setAlert("Произошла ошибка при загрузке объявления");
-}
-if (!data.value?.data) {
-  navigateTo("/");
-} else {
-  announcement.value = data.value?.data;
+if (data.value) {
+  announcement.value = data.value;
 
   useSeoMeta({
     title: `Wayliss | ${announcement.value.title.slice(0, 32)} ${announcement.value.title.length > 32 ? "..." : ""}`,

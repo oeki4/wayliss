@@ -8,5 +8,6 @@ export const useAnnouncementSlice = defineStore("announcement", () => {
   };
   return {
     setAnnouncements,
+    announcements,
   };
 });

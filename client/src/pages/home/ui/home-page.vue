@@ -3,23 +3,32 @@ import type { IAnnouncement } from "@/entities/announcement";
 import { Announcement, useAnnouncementSlice } from "@/entities/announcement";
 import type { ServerResponse } from "@/shared/types/serverResponse";
 import { useAlertSlice } from "@/entities/alert";
+import { FetchError } from "ofetch";
 const { setAlert } = useAlertSlice();
 const { setAnnouncements } = useAnnouncementSlice();
+const { announcements } = storeToRefs(useAnnouncementSlice());
 const config = useRuntimeConfig();
 
-const { data, error } = await useFetch<ServerResponse<IAnnouncement[]>>(
-  "/announcements/last",
-  {
-    baseURL: config.public.API_URL,
-  },
-);
-
-if (error.value?.data?.code === 500) {
-  setAlert("Непредвиденная ошибка сервера", "error");
-}
+const { data } = await useAsyncData("lastAnnouncements", async () => {
+  try {
+    const response = await $fetch<ServerResponse<IAnnouncement[]>>(
+      "/announcements/last",
+      {
+        baseURL: import.meta.server
+          ? config.SSR_API_URL
+          : config.public.API_URL,
+      },
+    );
+    return response.data;
+  } catch (err) {
+    if (err instanceof FetchError && err?.data?.code === 500) {
+      setAlert("Непредвиденная ошибка сервера", "error");
+    }
+  }
+});
 
 if (data.value) {
-  setAnnouncements(data.value.data);
+  setAnnouncements(data.value);
 }
 
 useSeoMeta({
@@ -36,11 +45,11 @@ useSeoMeta({
       Последние объявления
     </h1>
     <div
-      v-if="data?.data && data.data?.length"
+      v-if="announcements.length"
       class="w-full flex gap-4 gap-y-10 flex-wrap mb-10"
     >
       <Announcement
-        v-for="item in data.data"
+        v-for="item in announcements"
         :key="item.id"
         :announcement="item"
       />

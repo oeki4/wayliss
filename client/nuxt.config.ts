@@ -24,6 +24,7 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
   runtimeConfig: {
+    SSR_API_URL: process.env.SSR_API_URL,
     public: {
       API_URL: process.env.API_URL,
       STATIC_URL: process.env.STATIC_URL,

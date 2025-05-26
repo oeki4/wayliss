@@ -25,6 +25,6 @@ COPY --from=build /app/dist/ ./dist/
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/generated ./generated/
 
-EXPOSE 3005
+EXPOSE 3001
 
 CMD ["node", "dist/main.js"]
