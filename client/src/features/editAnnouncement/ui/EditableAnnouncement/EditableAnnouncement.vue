@@ -65,7 +65,7 @@ const carouselConfig = {
     <button
       class="bg-blue-500 flex justify-center items-center gap-2 hover:bg-blue-600 cursor-pointer transition-all font-montserrat text-white font-bold py-3 rounded-lg"
     >
-      Редактировать <EditIcon class="w-6 stroke-white stroke stroke-2" />
+      <EditIcon class="w-6 stroke-white stroke stroke-2" />
     </button>
   </div>
 </template>
