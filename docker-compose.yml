@@ -9,6 +9,7 @@ services:
       - ./docker/wayliss.crt:/etc/ssl/certs/wayliss.crt
       - ./docker/wayliss.key:/etc/ssl/private/wayliss.key
       - ./:/var/www/html
+      - ./letsencrypt:/etc/letsencrypt
     networks:
       - web
 
