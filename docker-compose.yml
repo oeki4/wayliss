@@ -82,7 +82,7 @@ services:
       - "5050:3008"
 
     networks:
-      - postgres
+      - db
 
     restart: unless-stopped
 
