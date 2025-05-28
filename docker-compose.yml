@@ -9,7 +9,6 @@ services:
       - ./docker/wayliss.crt:/etc/ssl/certs/wayliss.crt
       - ./docker/wayliss.key:/etc/ssl/private/wayliss.key
       - ./:/var/www/html
-      - ./letsencrypt:/etc/letsencrypt
     networks:
       - web
 
@@ -35,13 +34,11 @@ services:
       dockerfile: Dockerfile
     container_name: backend
     env_file:
-      /server/.env
+      ./server/.env
     depends_on:
       - postgres
     ports:
       - '3001:3001'
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     networks:
       - db
       - web
@@ -59,7 +56,7 @@ services:
     volumes:
       - ./client/src:/app/src
     env_file:
-      /client/.env
+      ./client/.env
     ports:
       - '3000:3000'
     networks:
