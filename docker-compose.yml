@@ -62,30 +62,6 @@ services:
       - '3000:3000'
     networks:
       - web
-
-  pgadmin:
-    container_name: pgadmin_container
-    image: dpage/pgadmin4:9.3
-
-    depends_on:
-      - postgres
-
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-
-    volumes:
-      - ./pgadmin:/var/lib/pgadmin
-
-    ports:
-      - "5050:80"
-
-    networks:
-      - db
-
-    restart: unless-stopped
-
 networks:
   db:
     driver: bridge
