@@ -2,7 +2,6 @@
 import GlassIcon from "@/shared/ui/Icons/GlassIcon.vue";
 import UserIcon from "@/shared/ui/Icons/UserIcon.vue";
 import type { User } from "@/entities/user";
-import { ShowCreateAnnouncementModalButton } from "@/features/createAnnouncement";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 import { AUTH_TOKEN } from "@/shared/const/constants";
 
@@ -35,7 +34,6 @@ const logout = () => {
           >Главная</NuxtLink
         >
       </div>
-      <ShowCreateAnnouncementModalButton v-if="user" />
       <div class="flex w-full justify-end gap-4">
         <GlassIcon class="min-w-6 w-6 stroke-black cursor-pointer" />
         <Menu v-if="user" as="div" class="relative inline-block text-center">

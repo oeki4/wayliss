@@ -5,6 +5,7 @@ import type { IAnnouncement } from "@/entities/announcement";
 import { AUTH_TOKEN } from "@/shared/const/constants";
 import { useAlertSlice } from "@/entities/alert";
 import EditableAnnouncement from "@/features/editAnnouncement/ui/EditableAnnouncement/EditableAnnouncement.vue";
+import { ShowCreateAnnouncementModalButton } from "@/features/createAnnouncement";
 
 const { setAlert } = useAlertSlice();
 
@@ -44,7 +45,12 @@ if (data?.value) {
 
 <template>
   <section class="max-w-7xl px-4 xl:px-0 py-6 w-full m-auto">
-    <h1 class="text-3xl font-montserrat font-medium mb-10">Мои объявления</h1>
+    <div class="w-full flex justify-between mb-10">
+      <h1 class="text-xl lg:text-3xl font-montserrat font-medium">
+        Мои объявления
+      </h1>
+      <ShowCreateAnnouncementModalButton v-if="user" />
+    </div>
     <div v-if="data?.length" class="w-full flex gap-4 gap-y-10 flex-wrap mb-10">
       <EditableAnnouncement
         v-for="item in data"
