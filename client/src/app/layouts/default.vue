@@ -16,6 +16,6 @@ defineProps<{
       <slot :user="user" />
       <CreateAnnouncementModal />
     </section>
-    <footer class="h-[100px]">Footer</footer>
+    <footer class="h-[100px]" />
   </div>
 </template>
