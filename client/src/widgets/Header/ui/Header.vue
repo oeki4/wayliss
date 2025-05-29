@@ -39,6 +39,7 @@ const logout = () => {
         <Menu v-if="user" as="div" class="relative inline-block text-center">
           <MenuButton>
             <NuxtImg
+              format="webp"
               class="rounded-full w-10 min-w-10 h-10 cursor-pointer"
               width="40"
               height="40"
