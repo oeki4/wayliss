@@ -95,6 +95,15 @@ const onSubmit = handleSubmit(async (values) => {
       >
         Авторизация
       </button>
+      <div class="flex flex-col gap-4">
+        <p class="font-montserrat text-center">Ещё нет аккаунта?</p>
+        <NuxtLink
+          href="/register"
+          class="font-montserrat flex justify-center font-semibold cursor-pointer bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
+        >
+          Зарегистрироваться
+        </NuxtLink>
+      </div>
     </form>
   </div>
 </template>
