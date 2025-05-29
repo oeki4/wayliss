@@ -64,6 +64,7 @@ if (data.value) {
         <Slide v-for="item in data.AnnouncementPhoto" :key="item.id">
           <NuxtImg
             :src="`${config.public.STATIC_URL}/${item.name}`"
+            sizes="896px"
             alt="announcement photo"
             class="max-w-4xl h-auto max-h-70 sm:max-h-110 sm:h-full w-full rounded-lg"
           />
@@ -84,6 +85,8 @@ if (data.value) {
           <h3 class="font-montserrat font-medium">Опубликовал:</h3>
           <div class="flex items-center gap-4">
             <NuxtImg
+              width="60"
+              height="60"
               class="rounded-full w-15 min-w-15 h-15"
               :src="`${config.public.API_URL}/users/${announcement?.User.id}/avatar`"
             />
