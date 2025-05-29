@@ -21,9 +21,9 @@ const { defineField, handleSubmit, errors } = useForm({
         if (!value) return true;
         return value.type.startsWith("image/");
       })
-      .test("file-size", "Максимальный размер аватара - 2MB", (value) => {
+      .test("file-size", "Максимальный размер аватара - 8MB", (value) => {
         if (!value) return true;
-        return value.size <= 2 * 1024 * 1024;
+        return value.size <= 8 * 1024 * 1024;
       }),
   }),
 });
