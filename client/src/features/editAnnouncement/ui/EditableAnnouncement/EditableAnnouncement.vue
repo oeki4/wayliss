@@ -22,11 +22,14 @@ const carouselConfig = {
     <Carousel
       v-if="announcement.AnnouncementPhoto.length > 1"
       class="z-10"
+      announcement
+      photo
       v-bind="carouselConfig"
     >
       <Slide v-for="item in announcement.AnnouncementPhoto" :key="item.id">
-        <img
+        <NuxtImg
           :src="`${config.public.STATIC_URL}/${item.name}`"
+          sizes="516px"
           alt="announcement photo"
           class="h-50 w-full rounded-lg"
         />
@@ -36,9 +39,10 @@ const carouselConfig = {
       </template>
     </Carousel>
 
-    <img
+    <NuxtImg
       v-else-if="announcement.AnnouncementPhoto.length === 1"
       :src="`${config.public.STATIC_URL}/${announcement.AnnouncementPhoto[0].name}`"
+      sizes="516px"
       alt="announcement photo"
       class="h-50 w-full rounded-lg"
     />

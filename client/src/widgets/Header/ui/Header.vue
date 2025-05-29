@@ -40,6 +40,8 @@ const logout = () => {
           <MenuButton>
             <NuxtImg
               class="rounded-full w-10 min-w-10 h-10 cursor-pointer"
+              width="40"
+              height="40"
               alt="avatar"
               :src="`${config.public.API_URL}/users/${user.sub}/avatar`"
           /></MenuButton>
