@@ -14,7 +14,8 @@ const carouselConfig = {
 };
 </script>
 <template>
-  <div
+  <NuxtLink
+    :href="`/announcement/${announcement.id}`"
     class="w-full announcement sm:w-48/100 lg:w-32/100 xl:w-24/100 flex flex-col gap-3 cursor-pointer"
     @click="$emit('onclick')"
   >
@@ -47,10 +48,7 @@ const carouselConfig = {
     />
 
     <div v-else class="h-50 w-full bg-gray-200 rounded-lg animate-pulse" />
-    <NuxtLink
-      :href="`/announcement/${announcement.id}`"
-      class="flex flex-col gap-2"
-    >
+    <div class="flex flex-col gap-2">
       <h5 class="font-montserrat font-semibold text-xl">
         {{ announcement.title }}
       </h5>
@@ -64,8 +62,8 @@ const carouselConfig = {
           )
         }}
       </p>
-    </NuxtLink>
-  </div>
+    </div>
+  </NuxtLink>
 </template>
 <style>
 .announcement .carousel__pagination-button {
