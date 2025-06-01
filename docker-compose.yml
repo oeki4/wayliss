@@ -34,6 +34,9 @@ services:
       context: ./server
       dockerfile: Dockerfile
     container_name: backend
+    volumes:
+      - ./avatars:/app/avatars
+      - ./uploads:/app/uploads
     env_file:
       ./server/.env
     depends_on:
