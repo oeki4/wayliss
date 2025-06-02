@@ -59,8 +59,10 @@ export const useCreateAnnouncementSlice = defineStore(
     };
 
     const uploadPhoto = (photo: File, announcementId: number) => {
+      const token = useCookie(AUTH_TOKEN);
       return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
+
         xhr.upload.onprogress = function (e) {
           console.log(`Отправлено ${e.loaded} из ${e.total} байт`);
           const index = photos.value.findIndex(
@@ -72,6 +74,7 @@ export const useCreateAnnouncementSlice = defineStore(
         formData.append("photo", photo);
         formData.append("announcementId", announcementId.toString());
         xhr.open("POST", `${config.public.API_URL}/announcements/upload`);
+        xhr.setRequestHeader("Authorization", `Bearer ${token.value}`);
         xhr.send(formData);
         xhr.onload = () => {
           try {

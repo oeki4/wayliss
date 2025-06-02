@@ -5,6 +5,8 @@ import { JwtPayload } from '@/modules/auth/types/jwtPayload';
 import { ErrorCodes } from '@/shared/const/errorCodes';
 import * as fs from 'node:fs';
 import { randomString } from '@/shared/utils/randomString';
+import { DeletePhotoDto } from './dto/delete-photo.dto';
+import { UpdateAnnouncementDto } from './dto/update-announcement.dto';
 
 @Injectable()
 export class AnnouncementService {
@@ -18,6 +20,39 @@ export class AnnouncementService {
           userId: user.sub,
         },
       });
+
+      return {
+        success: true,
+        data: announcement,
+      };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        'Internal server error',
+        ErrorCodes.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async update(updateAnnouncementDto: UpdateAnnouncementDto, user: JwtPayload) {
+    try {
+      const announcement = await this.prisma.announcement.update({
+        where: {
+          id: updateAnnouncementDto.announcementId,
+          userId: user.sub,
+        },
+        data: {
+          title: updateAnnouncementDto.title,
+          description: updateAnnouncementDto.description,
+        },
+      });
+
+      if (!announcement) {
+        throw new HttpException(
+          'Announcement not found',
+          ErrorCodes.ANNOUNCEMENT_NOT_FOUND,
+        );
+      }
 
       return {
         success: true,
@@ -123,8 +158,24 @@ export class AnnouncementService {
     }
   }
 
-  async uploadPhoto(photo: Express.Multer.File, announcementId: number) {
+  async uploadPhoto(
+    user: JwtPayload,
+    photo: Express.Multer.File,
+    announcementId: number,
+  ) {
     try {
+      const announcement = await this.prisma.announcement.findFirst({
+        where: {
+          id: announcementId,
+          userId: user.sub,
+        },
+      });
+      if (!announcement) {
+        throw new HttpException(
+          'The announcement does not belong to you',
+          ErrorCodes.ANNOUNCEMENT_NOT_BELONG_YOY,
+        );
+      }
       const extension = photo.originalname.match(/\.([^.]+)$/)?.[1];
       const randomName = randomString();
       fs.writeFileSync(`./uploads/${randomName}.${extension}`, photo.buffer);
@@ -137,6 +188,50 @@ export class AnnouncementService {
       return {
         success: true,
         data: announcementPhoto,
+      };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        'Internal server error',
+        ErrorCodes.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async deletePhoto(user: JwtPayload, deletePhotoDto: DeletePhotoDto) {
+    try {
+      const announcement = await this.prisma.announcement.findFirst({
+        where: {
+          id: deletePhotoDto.announcementId,
+          userId: user.sub,
+        },
+      });
+      if (!announcement) {
+        throw new HttpException(
+          'The announcement does not belong to you',
+          ErrorCodes.ANNOUNCEMENT_NOT_BELONG_YOY,
+        );
+      }
+      const announcementPhoto = await this.prisma.announcementPhoto.findFirst({
+        where: {
+          id: deletePhotoDto.photoId,
+        },
+      });
+      if (!announcementPhoto) {
+        throw new HttpException(
+          'Announcement not found',
+          ErrorCodes.ANNOUNCEMENT_NOT_FOUND,
+        );
+      }
+      fs.rmSync(`./uploads/${announcementPhoto.name}`);
+      await this.prisma.announcementPhoto.delete({
+        where: {
+          id: deletePhotoDto.photoId,
+        },
+      });
+      return {
+        success: true,
+        data: null,
       };
     } catch (e) {
       console.log(e);

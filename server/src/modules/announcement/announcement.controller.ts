@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   Param,
   ParseFilePipeBuilder,
   Post,
+  Put,
   Request,
   UploadedFile,
   UseGuards,
@@ -17,7 +19,9 @@ import { JwtPayload } from '@/modules/auth/types/jwtPayload';
 import { AuthGuard } from '@/guards/auth.guard';
 import { ErrorCodes } from '@/shared/const/errorCodes';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadPhotoDto } from '@/modules/announcement/dto/upload-photo.dto';
+import { UploadPhotoDto } from './dto/upload-photo.dto';
+import { DeletePhotoDto } from './dto/delete-photo.dto';
+import { UpdateAnnouncementDto } from '@/modules/announcement/dto/update-announcement.dto';
 
 @Controller('announcements')
 export class AnnouncementController {
@@ -30,6 +34,15 @@ export class AnnouncementController {
     @Request() request: Request & { user: JwtPayload },
   ) {
     return this.announcementService.create(createAnnouncementDto, request.user);
+  }
+
+  @UseGuards(AuthGuard)
+  @Put()
+  update(
+    @Body() updateAnnouncementDto: UpdateAnnouncementDto,
+    @Request() request: Request & { user: JwtPayload },
+  ) {
+    return this.announcementService.update(updateAnnouncementDto, request.user);
   }
 
   @Get('/last')
@@ -49,7 +62,9 @@ export class AnnouncementController {
   getAnnouncement(@Param('id') id: number) {
     return this.announcementService.getAnnouncement(id);
   }
+
   @Post('/upload')
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('photo'))
   uploadPhoto(
     @Body() uploadPhotoDto: UploadPhotoDto,
@@ -72,10 +87,21 @@ export class AnnouncementController {
         }),
     )
     photo: Express.Multer.File,
+    @Request() request: Request & { user: JwtPayload },
   ) {
     return this.announcementService.uploadPhoto(
+      request.user,
       photo,
       uploadPhotoDto.announcementId,
     );
+  }
+
+  @Delete('/photo')
+  @UseGuards(AuthGuard)
+  deletePhoto(
+    @Request() request: Request & { user: JwtPayload },
+    @Body() deletePhotoDto: DeletePhotoDto,
+  ) {
+    return this.announcementService.deletePhoto(request.user, deletePhotoDto);
   }
 }

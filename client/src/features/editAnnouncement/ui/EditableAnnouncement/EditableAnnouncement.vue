@@ -2,12 +2,24 @@
 import type { IAnnouncement } from "@/entities/announcement";
 import { DateTime } from "luxon";
 import EditIcon from "@/shared/ui/Icons/EditIcon.vue";
+import { useEditAnnouncementSlice } from "../../model/slice/useEditAnnouncementSlice";
 const config = useRuntimeConfig();
 
-defineProps<{
+const props = defineProps<{
   announcement: IAnnouncement;
 }>();
 defineEmits<{ (e: "onclick"): void }>();
+
+const { showEditAnnouncementModal, setEditableAnnouncement } =
+  useEditAnnouncementSlice();
+
+const { editableAnnouncement } = storeToRefs(useEditAnnouncementSlice());
+
+const editAnnouncement = () => {
+  setEditableAnnouncement(props.announcement);
+  console.log(editableAnnouncement.value);
+  showEditAnnouncementModal();
+};
 
 const carouselConfig = {
   itemsToShow: 1,
@@ -70,8 +82,10 @@ const carouselConfig = {
     </NuxtLink>
     <button
       class="bg-blue-500 flex justify-center items-center gap-2 hover:bg-blue-600 cursor-pointer transition-all font-montserrat text-white font-bold py-3 rounded-lg"
+      @click="editAnnouncement"
     >
-      Редактировать <EditIcon class="w-6 stroke-white stroke stroke-2" />
+      Редактировать
+      <EditIcon class="w-6 stroke-white stroke stroke-2" />
     </button>
   </div>
 </template>
