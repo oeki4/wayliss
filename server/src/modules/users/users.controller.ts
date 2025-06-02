@@ -33,7 +33,7 @@ export class UsersController {
           fileType: /(jpg|jpeg|png)$/,
         })
         .addMaxSizeValidator({
-          maxSize: 1000000,
+          maxSize: 8 * 1024 * 1024,
         })
         .build({
           fileIsRequired: false,

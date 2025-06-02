@@ -14,7 +14,8 @@ const carouselConfig = {
 };
 </script>
 <template>
-  <div
+  <NuxtLink
+    :href="`/announcement/${announcement.id}`"
     class="w-full announcement sm:w-48/100 lg:w-32/100 xl:w-24/100 flex flex-col gap-3 cursor-pointer"
     @click="$emit('onclick')"
   >
@@ -24,8 +25,10 @@ const carouselConfig = {
       v-bind="carouselConfig"
     >
       <Slide v-for="item in announcement.AnnouncementPhoto" :key="item.id">
-        <img
+        <NuxtImg
+          format="webp"
           :src="`${config.public.STATIC_URL}/${item.name}`"
+          sizes="600px"
           alt="announcement photo"
           class="h-50 w-full rounded-lg"
         />
@@ -35,18 +38,17 @@ const carouselConfig = {
       </template>
     </Carousel>
 
-    <img
+    <NuxtImg
       v-else-if="announcement.AnnouncementPhoto.length === 1"
+      format="webp"
       :src="`${config.public.STATIC_URL}/${announcement.AnnouncementPhoto[0].name}`"
+      sizes="600px"
       alt="announcement photo"
       class="h-50 w-full rounded-lg"
     />
 
     <div v-else class="h-50 w-full bg-gray-200 rounded-lg animate-pulse" />
-    <NuxtLink
-      :href="`/announcement/${announcement.id}`"
-      class="flex flex-col gap-2"
-    >
+    <div class="flex flex-col gap-2">
       <h5 class="font-montserrat font-semibold text-xl">
         {{ announcement.title }}
       </h5>
@@ -60,8 +62,8 @@ const carouselConfig = {
           )
         }}
       </p>
-    </NuxtLink>
-  </div>
+    </div>
+  </NuxtLink>
 </template>
 <style>
 .announcement .carousel__pagination-button {
