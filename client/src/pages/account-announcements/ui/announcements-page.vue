@@ -4,10 +4,17 @@ import type { ServerResponse } from "@/shared/types/serverResponse";
 import type { IAnnouncement } from "@/entities/announcement";
 import { AUTH_TOKEN } from "@/shared/const/constants";
 import { useAlertSlice } from "@/entities/alert";
-import EditableAnnouncement from "@/features/editAnnouncement/ui/EditableAnnouncement/EditableAnnouncement.vue";
+import {
+  EditableAnnouncement,
+  EditAnnouncementModal,
+} from "@/features/editAnnouncement";
 import { ShowCreateAnnouncementModalButton } from "@/features/createAnnouncement";
+import { useEditAnnouncementSlice } from "@/features/editAnnouncement/model/slice/useEditAnnouncementSlice";
 
 const { setAlert } = useAlertSlice();
+const { editableAnnouncement, editAnnouncementModalIsOpen } = storeToRefs(
+  useEditAnnouncementSlice(),
+);
 
 const props = defineProps<{
   user: User | null;
@@ -66,4 +73,7 @@ if (data?.value) {
       </button>
     </div>
   </section>
+  <EditAnnouncementModal
+    v-if="editableAnnouncement && editAnnouncementModalIsOpen"
+  />
 </template>
