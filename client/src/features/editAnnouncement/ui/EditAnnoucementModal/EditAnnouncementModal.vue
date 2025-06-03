@@ -168,7 +168,7 @@ const onAddPhoto = async (e: Event) => {
                   ]"
                 />
                 <div
-                  v-if="!(item.progress === 100) || !item?.file"
+                  v-if="item.progress === 100 || !item?.file"
                   class="w-full h-full transition-all flex flex-col justify-center items-center group-hover:bg-gray-700/70 cursor-pointer absolute top-0 left-0 rounded-xl"
                   @click="deletePhoto(item)"
                 >

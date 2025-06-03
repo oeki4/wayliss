@@ -59,7 +59,6 @@ export const useEditAnnouncementSlice = defineStore("editAnnouncement", () => {
             return el.file.name === photo.name;
           }
         });
-        console.log(photos.value[index]);
         photos.value[index].progress = Math.round((e.loaded / e.total) * 100);
       };
       const formData = new FormData();
@@ -80,6 +79,7 @@ export const useEditAnnouncementSlice = defineStore("editAnnouncement", () => {
             if (index === -1) return;
             photos.value[index].progress = 100;
             photos.value[index].loaded = true;
+            photos.value[index].id = res.data.id;
             resolve({ success: true });
           } else {
             const index = photos.value.findIndex((el) => {
@@ -164,13 +164,10 @@ export const useEditAnnouncementSlice = defineStore("editAnnouncement", () => {
         photos.value = photos.value.filter((el) => el?.id != photo.id);
         setAlert("Фото удалено успешно");
       } else {
-        setAlert("Ошибка при удалении фото");
+        setAlert("Ошибка при удалении фото", "error");
       }
     } else {
-      photos.value = photos.value.filter(
-        (el) => el.file?.name != el?.file?.name,
-      );
-      setAlert("Фото удалено успешно");
+      setAlert("Ошибка при удалении фото", "error");
     }
   };
 
