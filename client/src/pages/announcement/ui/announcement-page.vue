@@ -2,7 +2,7 @@
 import type { ServerResponse } from "@/shared/types/serverResponse";
 import type { IAnnouncement } from "@/entities/announcement";
 import { useAlertSlice } from "@/entities/alert";
-import type { Profile } from "@/entities/profile";
+import type { User } from "@/entities/user";
 
 const route = useRoute();
 const config = useRuntimeConfig();
@@ -17,12 +17,12 @@ if (!route.params.id) {
   navigateTo("/");
 }
 
-const announcement: Ref<(IAnnouncement & { User: Profile }) | null> = ref(null);
+const announcement: Ref<(IAnnouncement & { User: User }) | null> = ref(null);
 
 const { data } = await useAsyncData("announcementItem", async () => {
   try {
     const response = await $fetch<
-      ServerResponse<IAnnouncement & { User: Profile }>
+      ServerResponse<IAnnouncement & { User: User }>
     >(`/announcements/${route.params.id}`, {
       baseURL: import.meta.server ? config.SSR_API_URL : config.public.API_URL,
     });

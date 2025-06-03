@@ -55,4 +55,35 @@ export class AuthService {
       }
     }
   }
+
+  async profile(jwtPayload: JwtPayload) {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: {
+          id: jwtPayload.sub,
+        },
+        select: {
+          email: true,
+          id: true,
+          description: true,
+          avatar: true,
+          firstName: true,
+        },
+      });
+      if (!user) {
+        throw new UnauthorizedException();
+      }
+      return {
+        success: true,
+        data: user,
+      };
+    } catch (err) {
+      if (err instanceof UnauthorizedException) {
+        throw new HttpException(
+          'Internal server error',
+          ErrorCodes.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
 }

@@ -44,7 +44,7 @@ const logout = () => {
               width="40"
               height="40"
               alt="avatar"
-              :src="`${config.public.API_URL}/users/${user.sub}/avatar`"
+              :src="`${config.public.API_URL}/users/${user.id}/avatar`"
           /></MenuButton>
           <Transition
             enter-active-class="transition duration-100 ease-out"
@@ -70,7 +70,7 @@ const logout = () => {
                 <NuxtLink
                   :class="{ underline: active }"
                   class="font-montserrat text-sm"
-                  href="/account/announcements"
+                  href="/account/settings"
                 >
                   Настройки
                 </NuxtLink>
