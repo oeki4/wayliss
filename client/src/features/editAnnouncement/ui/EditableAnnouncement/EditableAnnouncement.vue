@@ -17,7 +17,6 @@ const { editableAnnouncement } = storeToRefs(useEditAnnouncementSlice());
 
 const editAnnouncement = () => {
   setEditableAnnouncement(props.announcement);
-  console.log(editableAnnouncement.value);
   showEditAnnouncementModal();
 };
 
