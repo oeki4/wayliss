@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import EditIcon from "@/shared/ui/Icons/EditIcon.vue";
 import type { User } from "@/entities/user";
 import CameraIcon from "@/shared/ui/Icons/CameraIcon.vue";
+import { EditProfileActions, EditProfileForm } from "@/features/editProfile";
 const config = useRuntimeConfig();
 
 const props = defineProps<{
@@ -17,12 +17,7 @@ if (!props.user) navigateTo("/login");
       <h1 class="text-2xl lg:text-3xl font-montserrat font-medium">
         Настройки
       </h1>
-      <button
-        class="bg-blue-500 flex justify-center items-center gap-2 hover:bg-blue-600 cursor-pointer transition-all font-montserrat text-white font-bold py-3 px-3 rounded-lg"
-      >
-        <span class="hidden sm:block"> Редактировать </span>
-        <EditIcon class="w-5 sm:w-6 stroke-white stroke stroke-2" />
-      </button>
+      <EditProfileActions />
     </div>
     <div class="mb-6 w-full sm:max-w-2xs flex justify-center sm:justify-start">
       <NuxtImg
@@ -47,34 +42,6 @@ if (!props.user) navigateTo("/login");
         </label>
       </div>
     </div>
-    <div class="flex gap-6 flex-wrap mb-6">
-      <div class="flex w-full sm:max-w-2xs flex-col gap-2">
-        <label for="firstName" class="font-montserrat">Ваше имя</label>
-        <input
-          id="firstName"
-          disabled
-          :value="user?.firstName"
-          class="w-full font-montserrat placeholder:text-gray-500 font-medium transition-all border-2 border-gray-400 px-2 py-2 focus:outline-0 rounded-lg focus:border-blue-500"
-        />
-      </div>
-      <div class="flex w-full sm:max-w-2xs flex-col gap-2">
-        <label for="email" class="font-montserrat">Электронная почта</label>
-        <input
-          id="email"
-          disabled
-          :value="user?.email"
-          class="w-full font-montserrat placeholder:text-gray-500 font-medium transition-all border-2 border-gray-400 px-2 py-2 focus:outline-0 rounded-lg focus:border-blue-500"
-        />
-      </div>
-    </div>
-    <div class="max-w-[600px] flex flex-col gap-2">
-      <label for="description" class="font-montserrat">Ваше описание</label>
-      <textarea
-        id="description"
-        disabled
-        :value="user?.description"
-        class="border-2 w-full min-h-[200px] font-montserrat text-gray-700 resize-none rounded-lg border-gray-400 px-2 py-2 focus:outline-0"
-      />
-    </div>
+    <EditProfileForm :user="user" />
   </section>
 </template>

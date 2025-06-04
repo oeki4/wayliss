@@ -1,4 +1,9 @@
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '@/modules/app/prisma.service';
 import { ConfigService } from '@nestjs/config';
@@ -6,6 +11,8 @@ import * as fs from 'node:fs';
 import { ErrorCodes } from '@/shared/const/errorCodes';
 import * as bcrypt from 'bcrypt';
 import { Prisma } from 'generated/prisma/client';
+import { JwtPayload } from '@/modules/auth/types/jwtPayload';
+import { UpdateUserDto } from '@/modules/users/dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -78,5 +85,42 @@ export class UsersService {
     });
 
     return user;
+  }
+
+  async updateUser(user: JwtPayload, updateUserDto: UpdateUserDto) {
+    try {
+      const updatedUser = await this.prisma.user.update({
+        where: {
+          id: user.sub,
+        },
+        data: {
+          firstName: updateUserDto.firstName,
+          description: updateUserDto.description,
+        },
+        select: {
+          email: true,
+          firstName: true,
+          description: true,
+          avatar: true,
+          id: true,
+        },
+      });
+
+      if (!updatedUser) {
+        if (!user) {
+          throw new UnauthorizedException();
+        }
+      }
+      return {
+        success: true,
+        data: updatedUser,
+      };
+    } catch (err) {
+      console.log(err);
+      throw new HttpException(
+        'Internal Server Error',
+        ErrorCodes.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
