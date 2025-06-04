@@ -10,6 +10,9 @@ import {
   Res,
   StreamableFile,
   Param,
+  UseGuards,
+  Request,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -18,6 +21,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { createReadStream } from 'fs';
 import { Response } from 'express';
+import { AuthGuard } from '@/guards/auth.guard';
+import { JwtPayload } from '@/modules/auth/types/jwtPayload';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -73,5 +79,14 @@ export class UsersController {
       const file = createReadStream(imageLocation);
       return new StreamableFile(file);
     }
+  }
+
+  @Put()
+  @UseGuards(AuthGuard)
+  updateProfile(
+    @Request() request: Request & { user: JwtPayload },
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.updateUser(request.user, updateUserDto);
   }
 }
