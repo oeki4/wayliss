@@ -88,8 +88,8 @@ const onAddPhoto = (e: Event) => {
       setAlert("Можно загружать только фото");
       return;
     }
-    if (!(file.size <= 2 * 1024 * 1024)) {
-      setAlert("Фото должно весить не более 1 Гб");
+    if (!(file.size <= 8 * 1024 * 1024)) {
+      setAlert("Фото должно весить не более 8 Мб");
       return;
     }
     if (photos.value.find((el) => el.file.name === file.name)) {
@@ -115,9 +115,11 @@ const onAddPhoto = (e: Event) => {
   >
     <Dialog class="relative z-50" @close="setCreateAnnouncementModal">
       <div class="fixed inset-0 bg-black/60" aria-hidden="true" />
-      <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+      <div
+        class="fixed inset-0 flex w-screen sm:items-start md:items-center justify-center p-4 h-screen overflow-y-scroll"
+      >
         <DialogPanel
-          class="bg-white relative flex flex-col gap-4 max-w-2xl w-full px-4 py-4 rounded-lg"
+          class="bg-white relative flex flex-col gap-4 max-w-2xl w-full px-4 py-4 rounded-lg h-fit"
         >
           <button
             class="absolute top-1 cursor-pointer right-1"

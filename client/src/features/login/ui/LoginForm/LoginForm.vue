@@ -23,16 +23,20 @@ const { errors, defineField, handleSubmit } = useForm({
 });
 const [email, emailAttrs] = defineField("email");
 const [password, passwordAttrs] = defineField("password");
+const authToken = ref<string | null>(null);
 
 const onSubmit = handleSubmit(async (values) => {
-  const token = useCookie(AUTH_TOKEN);
   try {
     const res = await login({
       email: values.email,
       password: values.password,
     });
+    const token = useCookie(AUTH_TOKEN, {
+      maxAge: 60 * 60 * 24 * 2,
+    });
 
     token.value = res.data.token;
+    authToken.value = res.data.token;
     setAlert("Авторизация прошла успешно!");
   } catch (e) {
     if (e instanceof Error) {
@@ -51,9 +55,13 @@ const onSubmit = handleSubmit(async (values) => {
   }
 
   try {
-    const res = await fetchProfile(token.value);
-    setUser(res.data);
-    reloadNuxtApp();
+    if (authToken.value) {
+      const res = await fetchProfile(authToken.value);
+      setUser(res.data);
+      reloadNuxtApp();
+    } else {
+      setAlert("Ошибка при авторизации. Попробуйте позже...", "error");
+    }
   } catch (e) {
     if (e instanceof Error) {
       const error = e as FetchError;

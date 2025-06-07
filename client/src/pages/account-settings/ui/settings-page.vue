@@ -9,6 +9,13 @@ const props = defineProps<{
 }>();
 
 if (!props.user) navigateTo("/login");
+
+useSeoMeta({
+  title: `Wayliss - Настройки`,
+  ogTitle: `Wayliss - Настройки`,
+  description: `Wayliss - Настройки`,
+  ogDescription: `Wayliss - Настройки`,
+});
 </script>
 
 <template>

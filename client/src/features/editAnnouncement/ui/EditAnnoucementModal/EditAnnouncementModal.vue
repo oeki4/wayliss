@@ -40,26 +40,6 @@ const { errors, defineField, handleSubmit } = useForm({
 const [title, titleAttrs] = defineField("title");
 const [description, descriptionAttrs] = defineField("description");
 const onSubmit = handleSubmit(async (values) => {
-  // try {
-  //   // Объявление было создано, но не все фото загружены успешно
-  //   for (const photo of photos.value) {
-  //     if (!photo.loaded) {
-  //       await uploadPhoto(photo.file, editableAnnouncement.value.id);
-  //     }
-  //   }
-  //
-  //   setAlert("Вы успешно обновили объявление!");
-  // } catch (e) {
-  //   if (e instanceof Error) {
-  //     const error = e as FetchError;
-  //     if (error.data?.code === 500) {
-  //       setAlert("Непредвиденная ошибка сервера", "error");
-  //     }
-  //   } else {
-  //     setAlert("Непредвиденная ошибка сервера", "error");
-  //   }
-  //   console.log(e);
-  // }
   await updateAnnouncement({
     title: values.title,
     description: values.description,
@@ -107,9 +87,11 @@ const onAddPhoto = async (e: Event) => {
   >
     <Dialog class="relative z-50" @close="setEditAnnouncementModal">
       <div class="fixed inset-0 bg-black/60" aria-hidden="true" />
-      <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+      <div
+        class="fixed inset-0 flex w-screen sm:items-start md:items-center justify-center p-4 h-screen overflow-y-scroll"
+      >
         <DialogPanel
-          class="bg-white relative flex flex-col gap-4 max-w-2xl w-full px-4 py-4 rounded-lg"
+          class="bg-white relative flex flex-col gap-4 max-w-2xl w-full px-4 py-4 rounded-lg h-fit"
         >
           <button
             class="absolute top-1 cursor-pointer right-1"
