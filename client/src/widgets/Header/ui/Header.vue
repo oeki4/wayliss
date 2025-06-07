@@ -55,25 +55,25 @@ const logout = () => {
             leave-to-class="transform scale-95 opacity-0"
           >
             <MenuItems
-              class="absolute flex flex-col gap-1.5 whitespace-nowrap -right-7/5 mt-2 bg-gray-100 px-3 py-3 rounded-lg shadow-lg"
+              class="absolute flex flex-col gap-1.5 whitespace-nowrap -left-26 xl:-right-7/5 mt-2 bg-gray-100 px-3 py-3 rounded-lg shadow-lg"
             >
               <MenuItem v-slot="{ active }">
-                <NuxtLink
+                <button
                   :class="{ underline: active }"
-                  class="font-montserrat text-sm"
-                  href="/account/announcements"
+                  class="font-montserrat text-sm cursor-pointer"
+                  @click="navigateTo('/account/announcements')"
                 >
                   Мои объявления
-                </NuxtLink>
+                </button>
               </MenuItem>
               <MenuItem v-slot="{ active }">
-                <NuxtLink
+                <button
                   :class="{ underline: active }"
-                  class="font-montserrat text-sm"
-                  href="/account/settings"
+                  class="font-montserrat text-sm cursor-pointer"
+                  @click="navigateTo('/account/settings')"
                 >
                   Настройки
-                </NuxtLink>
+                </button>
               </MenuItem>
               <MenuItem v-slot="{ active }">
                 <button

@@ -48,6 +48,13 @@ const { data } = await useAsyncData("accountAnnouncements", async () => {
 if (data?.value) {
   announcements.value = data?.value;
 }
+
+useSeoMeta({
+  title: `Wayliss - Ваши объявления`,
+  ogTitle: `Wayliss - Ваши объявления`,
+  description: `Wayliss - Ваши объявления`,
+  ogDescription: `Wayliss - Ваши объявления`,
+});
 </script>
 
 <template>
