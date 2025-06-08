@@ -4,6 +4,7 @@ import UserIcon from "@/shared/ui/Icons/UserIcon.vue";
 import type { User } from "@/entities/user";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 import { AUTH_TOKEN } from "@/shared/const/constants";
+import MessageIcon from "@/shared/ui/Icons/MessageIcon.vue";
 
 defineProps<{
   user: User | null;
@@ -36,6 +37,10 @@ const logout = () => {
       </div>
       <div class="flex w-full justify-end gap-4">
         <GlassIcon class="min-w-6 w-6 stroke-black cursor-pointer" />
+        <NuxtLink v-if="user" class="flex justify-center" href="/account/chats">
+          <MessageIcon class="min-w-6 w-6 stroke-black cursor-pointer" />
+        </NuxtLink>
+
         <Menu v-if="user" as="div" class="relative inline-block text-center">
           <MenuButton>
             <NuxtImg
