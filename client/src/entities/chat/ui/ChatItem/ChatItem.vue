@@ -8,7 +8,7 @@ const { user } = storeToRefs(useUserSlice());
 
 <template>
   <div
-    class="text-slate-200 flex px-3 py-2 cursor-pointer hover:bg-slate-300 transition-all gap-2.5 items-center"
+    class="text-slate-200 max-h-[88px] flex px-3 py-2 cursor-pointer hover:bg-slate-300 transition-all gap-2.5 items-center"
   >
     <img
       :src="`${config.public.API_URL}/users/${user?.id}/avatar`"
