@@ -6,12 +6,16 @@ import { AuthModule } from '@/modules/auth/auth.module';
 import { AnnouncementModule } from '@/modules/announcement/announcement.module';
 import * as path from 'node:path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ChatModule } from '@/modules/chat/chat.module';
+import { MessageModule } from '@/modules/message/message.module';
 
 @Module({
   imports: [
     UsersModule,
     AuthModule,
     AnnouncementModule,
+    ChatModule,
+    MessageModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.${process.env.NODE_ENV}.env`,
