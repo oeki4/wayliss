@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useUserSlice } from "@/entities/user";
 import SendIcon from "@/shared/ui/Icons/SendIcon.vue";
-import { MessageItem } from "@/entities/chat";
+import { Message } from "@/entities/message";
 
 const config = useRuntimeConfig();
 
@@ -25,14 +25,14 @@ const { user } = storeToRefs(useUserSlice());
     </div>
     <div class="px-3 py-2 h-full border-x-3 overflow-y-scroll border-slate-300">
       <div class="w-full flex mt-4 justify-end">
-        <MessageItem
+        <Message
           :avatar="`${config.public.API_URL}/users/${user?.id}/avatar`"
           message="Привет!"
           position="right"
         />
       </div>
       <div class="w-full flex mt-4">
-        <MessageItem
+        <Message
           :avatar="`${config.public.API_URL}/users/${user?.id}/avatar`"
           message="Дарова!"
           position="left"

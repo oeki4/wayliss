@@ -15,6 +15,7 @@ export class ChatService {
         ErrorCodes.CHAT_WITH_YOURSELF,
       );
     }
+
     try {
       return this.prisma.$transaction(async (prisma) => {
         const existingChat = await prisma.chat.findFirst({
@@ -41,6 +42,7 @@ export class ChatService {
             },
           },
         });
+
         if (existingChat)
           return {
             success: true,
@@ -119,6 +121,7 @@ export class ChatService {
                 select: {
                   id: true,
                   avatar: true,
+                  firstName: true,
                 },
               },
             },

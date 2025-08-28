@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import type { User } from "@/entities/user";
-import { ChatItem } from "@/entities/chat";
-import Dialog from "./Dialog/Dialog.vue";
 import RightArrowIcon from "@/shared/ui/Icons/RightArrowIcon.vue";
+import { Dialog } from "@/widgets/Dialog";
+import { ChatList } from "@/widgets/ChatList";
+import type { ChatListItem } from "@/entities/chat";
+import type { ServerResponse } from "@/shared/types/serverResponse";
+import { AUTH_TOKEN } from "@/shared/const/constants";
+import { useAlertSlice } from "@/entities/alert";
+const { setAlert } = useAlertSlice();
 
 const props = defineProps<{
   user: User | null;
@@ -10,6 +15,24 @@ const props = defineProps<{
 
 if (!props.user) navigateTo("/login");
 const chatsListHidden = ref(false);
+
+const config = useRuntimeConfig();
+const token = useCookie(AUTH_TOKEN);
+
+const { data: chatList } = await useAsyncData("accountChats", async () => {
+  try {
+    const response = await $fetch<ServerResponse<ChatListItem[]>>("/chats", {
+      baseURL: import.meta.server ? config.SSR_API_URL : config.public.API_URL,
+      headers: {
+        authorization: `Bearer ${token.value}`,
+      },
+    });
+
+    return response.data;
+  } catch {
+    setAlert("Ошибка при загрузке ваших объявлений");
+  }
+});
 
 useSeoMeta({
   title: `Wayliss - Чаты`,
@@ -43,17 +66,7 @@ useSeoMeta({
           'w-full max-w-full md:max-w-[300px]': !chatsListHidden,
         }"
       >
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
+        <ChatList :chats="chatList || []" />
       </div>
       <Dialog
         class="transition-all duration-300 ease-linear"

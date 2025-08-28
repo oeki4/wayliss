@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { useUserSlice } from "@/entities/user";
 import { DateTime } from "luxon";
+import type { ChatListItem } from "@/entities/chat";
 const config = useRuntimeConfig();
 
-const { user } = storeToRefs(useUserSlice());
+defineProps<{
+  chat: ChatListItem;
+}>();
 </script>
 
 <template>
@@ -11,15 +13,15 @@ const { user } = storeToRefs(useUserSlice());
     class="text-slate-200 max-h-[88px] flex px-3 py-2 cursor-pointer hover:bg-slate-300 transition-all gap-2.5 items-center"
   >
     <img
-      :src="`${config.public.API_URL}/users/${user?.id}/avatar`"
-      :alt="`${user?.firstName}`"
+      :src="`${config.public.API_URL}/users/${chat.UserChat[1].User.id}/avatar`"
+      :alt="`${chat.UserChat[1].User.id}`"
       class="min-w-15 w-15 min-h-15 h-15 border-slate-400 rounded-full border-3"
       style="width: 60px; height: 60px"
     />
     <div class="w-full flex flex-col">
       <div class="w-full flex items-center justify-between gap-2.5">
         <p class="mt-2 font-montserrat text-slate-700 font-semibold text-base">
-          {{ user?.firstName }}
+          {{ chat.UserChat[1].User.firstName }}
         </p>
         <p
           v-if="true"
@@ -44,4 +46,3 @@ const { user } = storeToRefs(useUserSlice());
     </div>
   </div>
 </template>
-<script setup lang="ts"></script>

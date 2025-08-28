@@ -14,6 +14,7 @@ export class ChatController {
     @Body() createChatDto: CreateChatDto,
     @Req() req: Request & { user: JwtPayload },
   ) {
+    console.log(createChatDto);
     return this.chatService.createChat(createChatDto, req.user);
   }
 
