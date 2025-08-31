@@ -57,11 +57,12 @@ export class MessageGateway {
   @UseGuards(MessageAuthGuard)
   @SubscribeMessage('message:user:send')
   async sendMessage(
-    @MessageBody() data: string,
+    @MessageBody() data,
     @ConnectedSocket()
     client: SocketWithUser,
   ) {
-    const jsonData = JSON.parse(data) as {
+    console.log(data);
+    const jsonData = data as {
       chatId: number;
       message: string;
     };
@@ -71,6 +72,7 @@ export class MessageGateway {
       !this.getConnectedUser(client.request.user.sub)
     )
       return;
+    console.log(123);
 
     const chat = await this.prisma.chat.findUnique({
       where: {

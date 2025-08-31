@@ -1,28 +1,15 @@
-// import type { ServerResponse } from "@/shared/types/serverResponse";
-// import type { IAnnouncement } from "@/entities/announcement";
-// import { AUTH_TOKEN } from "@/shared/const/constants";
-//
-// export const useDialogSlice = defineStore("dialog", () => {
-//   const config = useRuntimeConfig();
-//
-//   const login = async () => {
-//     return $fetch<
-//       ServerResponse<{
-//         token: string;
-//       }>
-//     >("/auth", {
-//       method: "POST",
-//       baseURL: config.public.API_URL,
-//       body: JSON.stringify({
-//         email,
-//         password,
-//       }),
-//     });
-//   };
-//
-//   const fetchChats = () => {
-//     console.log(1);
-//   };
-//
-//   return {};
-// });
+import type { MessageItem } from "@/entities/message";
+
+export const useDialogSlice = defineStore("dialog", () => {
+  const messages: Ref<MessageItem[]> = ref([]);
+
+  const setMessages = (payload: MessageItem[]) => {
+    messages.value = payload;
+  };
+
+  const addMessage = (payload: MessageItem) => {
+    messages.value.push(payload);
+  };
+
+  return { setMessages, messages, addMessage };
+});

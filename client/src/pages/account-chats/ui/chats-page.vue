@@ -6,13 +6,14 @@ import { ChatList } from "@/widgets/ChatList";
 import type { ChatListItem } from "@/entities/chat";
 import type { ServerResponse } from "@/shared/types/serverResponse";
 import { AUTH_TOKEN } from "@/shared/const/constants";
-import { useAlertSlice } from "@/entities/alert";
-const { setAlert } = useAlertSlice();
 
 const props = defineProps<{
   user: User | null;
 }>();
 
+const route = useRoute();
+
+if (isNaN(+route.params.id)) navigateTo("/");
 if (!props.user) navigateTo("/login");
 const chatsListHidden = ref(false);
 
@@ -29,8 +30,8 @@ const { data: chatList } = await useAsyncData("accountChats", async () => {
     });
 
     return response.data;
-  } catch {
-    setAlert("Ошибка при загрузке ваших объявлений");
+  } catch (e) {
+    console.log(e);
   }
 });
 
@@ -66,15 +67,27 @@ useSeoMeta({
           'w-full max-w-full md:max-w-[300px]': !chatsListHidden,
         }"
       >
-        <ChatList :chats="chatList || []" />
+        <ChatList :user="user" :chats="chatList || []" />
       </div>
       <Dialog
+        v-if="route.params.id"
+        :user="user"
         class="transition-all duration-300 ease-linear"
         :class="{
           '!w-0 md:!w-full': !chatsListHidden,
           'w-full': chatsListHidden,
         }"
       />
+      <div
+        v-else
+        class="w-full rounded-lg flex flex-col justify-center items-center max-h-[550px] md:max-h-[650px] h-[550px] md:h-[650px] bg-slate-200 overflow-y-scroll"
+      >
+        <p
+          class="text-sm text-slate-500 font-montserrat font-semibold overflow-hidden whitespace-nowrap"
+        >
+          Выберите чат
+        </p>
+      </div>
     </div>
   </section>
 </template>

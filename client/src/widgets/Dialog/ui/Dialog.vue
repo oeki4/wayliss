@@ -1,11 +1,61 @@
 <script setup lang="ts">
-import { useUserSlice } from "@/entities/user";
 import SendIcon from "@/shared/ui/Icons/SendIcon.vue";
-import { Message } from "@/entities/message";
+import { Message, type MessageItem } from "@/entities/message";
+import type { MessageGetResponse } from "@/shared/types/socketMessage";
+import type { ServerResponse } from "@/shared/types/serverResponse";
+import { AUTH_TOKEN } from "@/shared/const/constants";
+import type { User } from "@/entities/user";
+const { $socket, $convertSockMessageToJSON } = useNuxtApp();
 
 const config = useRuntimeConfig();
 
-const { user } = storeToRefs(useUserSlice());
+const token = useCookie(AUTH_TOKEN);
+const route = useRoute();
+
+defineProps<{
+  user: User;
+}>();
+
+const { data: chat } = await useAsyncData("chat", async () => {
+  try {
+    const response = await $fetch<
+      ServerResponse<{
+        id: number;
+        creatorId: number;
+        Message: MessageItem[];
+      }>
+    >(`/chats/${route.params.id}`, {
+      baseURL: import.meta.server ? config.SSR_API_URL : config.public.API_URL,
+      headers: {
+        authorization: `Bearer ${token.value}`,
+      },
+    });
+
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// const dialogSlice = useDialogSlice();
+// dialogSlice.
+
+// const { messages } = storeToRefs(useDialogSlice());
+// const alertStore = useAlertSlice();
+// const { text, status } = storeToRefs(alertStore);
+
+// const { user } = storeToRefs(useUserSlice());
+
+onMounted(() => {
+  $socket.on("message:get", (msg) => {
+    const messageJSON = $convertSockMessageToJSON<MessageGetResponse>(msg);
+    if (messageJSON.success) {
+      console.log("Получено новое сообщение: ", messageJSON);
+    }
+  });
+
+  // setMessages(chat.value?.Message);
+});
 </script>
 <template>
   <div
@@ -14,30 +64,33 @@ const { user } = storeToRefs(useUserSlice());
     <div
       class="px-3 py-2 flex items-center gap-2.5 border-3 border-slate-300 rounded-t-lg"
     >
-      <img
+      <NuxtImg
         :src="`${config.public.API_URL}/users/${user?.id}/avatar`"
-        :alt="`${user?.firstName} avatar`"
+        :alt="`${user?.firstName}'s avatar`"
         class="w-15 h-15 rounded-full border-3 border-slate-400"
+        format="webp"
+        quality="80"
+        width="60"
+        height="60"
+        lazy
       />
       <h4 class="font-montserrat text-slate-600 font-semibold">
         {{ user?.firstName }}
       </h4>
     </div>
     <div class="px-3 py-2 h-full border-x-3 overflow-y-scroll border-slate-300">
-      <div class="w-full flex mt-4 justify-end">
-        <Message
-          :avatar="`${config.public.API_URL}/users/${user?.id}/avatar`"
-          message="Привет!"
-          position="right"
-        />
-      </div>
-      <div class="w-full flex mt-4">
-        <Message
-          :avatar="`${config.public.API_URL}/users/${user?.id}/avatar`"
-          message="Дарова!"
-          position="left"
-        />
-      </div>
+      <template v-for="messageItem in chat?.Message" :key="messageItem?.chatId">
+        <div
+          class="w-full flex mt-4"
+          :class="`${messageItem?.User.id === user.id ? 'justify-end' : 'justify-start'}`"
+        >
+          <Message
+            :avatar="`${config.public.API_URL}/users/${messageItem.User?.id}/avatar`"
+            :message="`${messageItem?.content}`"
+            :position="`${messageItem?.User.id === user.id ? 'right' : 'left'}`"
+          />
+        </div>
+      </template>
     </div>
     <div class="w-full px-1 py-2 border-3 flex border-slate-300 rounded-b-lg">
       <input

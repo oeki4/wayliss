@@ -167,10 +167,13 @@ const onAddPhoto = (e: Event) => {
                 :key="item.file.lastModified"
                 class="w-[150px] h-24 relative group"
               >
-                <img
+                <NuxtImg
                   :src="item.url"
                   class="rounded-xl cursor-pointer hover:border-blue-600 border-blue-500 transition-all w-full h-full border-3"
                   alt="preview"
+                  format="webp"
+                  quality="100"
+                  lazy
                 />
                 <div
                   class="py-1.5 bg-blue-500 absolute bottom-0 rounded-b-lg transition-all"

@@ -141,4 +141,49 @@ export class ChatService {
       }
     }
   }
+
+  async getChatById(user: JwtPayload, chatId: number) {
+    try {
+      const chat = await this.prisma.chat.findFirst({
+        where: {
+          id: chatId,
+          UserChat: {
+            some: {
+              userId: user.sub,
+            },
+          },
+        },
+        include: {
+          UserChat: {
+            include: {
+              User: true,
+            },
+          },
+          Message: {
+            include: {
+              User: {
+                omit: {
+                  password: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      if (!chat) {
+        return new HttpException('Chat not found', ErrorCodes.CHAT_NOT_FOUND);
+      }
+      return {
+        success: true,
+        data: chat,
+      };
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new HttpException(
+          'Internal server error',
+          ErrorCodes.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
 }
