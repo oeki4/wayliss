@@ -1,4 +1,4 @@
-import type { MessageType } from "@/shared/types/messageType";
+import type { MessageItem } from "@/entities/message";
 
 export interface ChatsJoinResponse {
   success: boolean;
@@ -6,12 +6,5 @@ export interface ChatsJoinResponse {
 
 export interface MessageGetResponse {
   success: boolean;
-  data: {
-    chatId: number;
-    content: string;
-    createdAt: Date;
-    id: number;
-    type: MessageType;
-    userId: number;
-  };
+  data: MessageItem;
 }

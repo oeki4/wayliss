@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { User } from "@/entities/user";
 import RightArrowIcon from "@/shared/ui/Icons/RightArrowIcon.vue";
-import { Dialog } from "@/widgets/Dialog";
+import { ChatDialog } from "@/widgets/ChatDialog";
 import { ChatList } from "@/widgets/ChatList";
 import type { ChatListItem } from "@/entities/chat";
 import type { ServerResponse } from "@/shared/types/serverResponse";
@@ -14,7 +14,9 @@ const props = defineProps<{
 const route = useRoute();
 
 if (isNaN(+route.params.id)) navigateTo("/");
-if (!props.user) navigateTo("/login");
+if (!props.user) {
+  navigateTo("/login");
+}
 const chatsListHidden = ref(false);
 
 const config = useRuntimeConfig();
@@ -67,10 +69,10 @@ useSeoMeta({
           'w-full max-w-full md:max-w-[300px]': !chatsListHidden,
         }"
       >
-        <ChatList :user="user" :chats="chatList || []" />
+        <ChatList v-if="user" :user="user" :chats="chatList || []" />
       </div>
-      <Dialog
-        v-if="route.params.id"
+      <ChatDialog
+        v-if="route.params.id && user"
         :user="user"
         class="transition-all duration-300 ease-linear"
         :class="{

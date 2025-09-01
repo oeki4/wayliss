@@ -95,6 +95,13 @@ export class MessageGateway {
         chatId: jsonData.chatId,
         content: jsonData.message,
       },
+      include: {
+        User: {
+          omit: {
+            password: true,
+          },
+        },
+      },
     });
     client.emit('message:user:send', {
       success: true,

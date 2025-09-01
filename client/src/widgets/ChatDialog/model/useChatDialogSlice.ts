@@ -1,6 +1,7 @@
 import type { MessageItem } from "@/entities/message";
+import { ref } from "vue";
 
-export const useDialogSlice = defineStore("dialog", () => {
+export const useChatDialogSlice = defineStore("chatDialog", () => {
   const messages: Ref<MessageItem[]> = ref([]);
 
   const setMessages = (payload: MessageItem[]) => {

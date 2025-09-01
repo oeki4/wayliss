@@ -5,6 +5,7 @@ import type { MessageGetResponse } from "@/shared/types/socketMessage";
 import type { ServerResponse } from "@/shared/types/serverResponse";
 import { AUTH_TOKEN } from "@/shared/const/constants";
 import type { User } from "@/entities/user";
+import { useChatDialogSlice } from "../model/useChatDialogSlice";
 const { $socket, $convertSockMessageToJSON } = useNuxtApp();
 
 const config = useRuntimeConfig();
@@ -16,45 +17,49 @@ defineProps<{
   user: User;
 }>();
 
-const { data: chat } = await useAsyncData("chat", async () => {
-  try {
-    const response = await $fetch<
-      ServerResponse<{
-        id: number;
-        creatorId: number;
-        Message: MessageItem[];
-      }>
-    >(`/chats/${route.params.id}`, {
-      baseURL: import.meta.server ? config.SSR_API_URL : config.public.API_URL,
-      headers: {
-        authorization: `Bearer ${token.value}`,
-      },
-    });
+const { data: chat } = await useAsyncData(
+  `chat-${route.params.id}`,
+  async () => {
+    try {
+      const response = await $fetch<
+        ServerResponse<{
+          id: number;
+          creatorId: number;
+          Message: MessageItem[];
+        }>
+      >(`/chats/${route.params.id}`, {
+        baseURL: import.meta.server
+          ? config.SSR_API_URL
+          : config.public.API_URL,
+        headers: {
+          authorization: `Bearer ${token.value}`,
+        },
+      });
 
-    return response.data;
-  } catch (e) {
-    console.log(e);
-  }
+      return response.data;
+    } catch (e) {
+      console.log(e);
+    }
+  },
+);
+
+const chatDialogSlice = useChatDialogSlice();
+const { messages } = storeToRefs(chatDialogSlice);
+const { setMessages, addMessage } = chatDialogSlice;
+
+const displayedMessages = computed(() => {
+  return messages.value.length ? messages.value : chat.value?.Message || [];
 });
-
-// const dialogSlice = useDialogSlice();
-// dialogSlice.
-
-// const { messages } = storeToRefs(useDialogSlice());
-// const alertStore = useAlertSlice();
-// const { text, status } = storeToRefs(alertStore);
-
-// const { user } = storeToRefs(useUserSlice());
 
 onMounted(() => {
   $socket.on("message:get", (msg) => {
     const messageJSON = $convertSockMessageToJSON<MessageGetResponse>(msg);
     if (messageJSON.success) {
       console.log("Получено новое сообщение: ", messageJSON);
+      addMessage(messageJSON.data);
     }
   });
-
-  // setMessages(chat.value?.Message);
+  if (chat.value?.Message) setMessages(chat.value?.Message);
 });
 </script>
 <template>
@@ -79,18 +84,23 @@ onMounted(() => {
       </h4>
     </div>
     <div class="px-3 py-2 h-full border-x-3 overflow-y-scroll border-slate-300">
-      <template v-for="messageItem in chat?.Message" :key="messageItem?.chatId">
-        <div
-          class="w-full flex mt-4"
-          :class="`${messageItem?.User.id === user.id ? 'justify-end' : 'justify-start'}`"
+      <div v-if="displayedMessages.length">
+        <template
+          v-for="messageItem in displayedMessages"
+          :key="messageItem?.chatId"
         >
-          <Message
-            :avatar="`${config.public.API_URL}/users/${messageItem.User?.id}/avatar`"
-            :message="`${messageItem?.content}`"
-            :position="`${messageItem?.User.id === user.id ? 'right' : 'left'}`"
-          />
-        </div>
-      </template>
+          <div
+            class="w-full flex mt-4"
+            :class="`${messageItem?.User.id === user.id ? 'justify-end' : 'justify-start'}`"
+          >
+            <Message
+              :avatar="`${config.public.API_URL}/users/${messageItem.User?.id}/avatar`"
+              :message="`${messageItem?.content}`"
+              :position="`${messageItem?.User.id === user.id ? 'right' : 'left'}`"
+            />
+          </div>
+        </template>
+      </div>
     </div>
     <div class="w-full px-1 py-2 border-3 flex border-slate-300 rounded-b-lg">
       <input
