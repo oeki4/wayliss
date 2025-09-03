@@ -51,15 +51,56 @@ const displayedMessages = computed(() => {
   return messages.value.length ? messages.value : chat.value?.Message || [];
 });
 
-onMounted(() => {
-  $socket.on("message:get", (msg) => {
+const messagesContainer = ref<HTMLDivElement | null>(null);
+
+const scrollToBottom = async () => {
+  await nextTick();
+  if (messagesContainer.value) {
+    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+  }
+};
+
+watch(displayedMessages, async () => {
+  await scrollToBottom();
+});
+
+const sendMessage = async (message: string) => {
+  if (!message) return;
+  if (!chat.value?.id) {
+    throw new Error("Chat id don't provided");
+  }
+  $socket.emit(
+    "message:user:send",
+    JSON.stringify({
+      chatId: chat.value.id,
+      message,
+    }),
+  );
+};
+
+const message = ref("");
+
+onMounted(async () => {
+  $socket.on("message:get", async (msg) => {
     const messageJSON = $convertSockMessageToJSON<MessageGetResponse>(msg);
     if (messageJSON.success) {
       console.log("Получено новое сообщение: ", messageJSON);
       addMessage(messageJSON.data);
+      await scrollToBottom();
+    }
+  });
+
+  $socket.on("message:user:send", async (msg) => {
+    const messageJSON = $convertSockMessageToJSON<MessageGetResponse>(msg);
+    if (messageJSON.success) {
+      console.log("Сообщение успешно отправлено: ", messageJSON);
+      addMessage(messageJSON.data);
+      message.value = "";
+      await scrollToBottom();
     }
   });
   if (chat.value?.Message) setMessages(chat.value?.Message);
+  await scrollToBottom();
 });
 </script>
 <template>
@@ -83,7 +124,10 @@ onMounted(() => {
         {{ user?.firstName }}
       </h4>
     </div>
-    <div class="px-3 py-2 h-full border-x-3 overflow-y-scroll border-slate-300">
+    <div
+      ref="messagesContainer"
+      class="px-3 py-2 h-full border-x-3 overflow-y-scroll border-slate-300"
+    >
       <div v-if="displayedMessages.length">
         <template
           v-for="messageItem in displayedMessages"
@@ -97,6 +141,7 @@ onMounted(() => {
               :avatar="`${config.public.API_URL}/users/${messageItem.User?.id}/avatar`"
               :message="`${messageItem?.content}`"
               :position="`${messageItem?.User.id === user.id ? 'right' : 'left'}`"
+              :date="messageItem.createdAt"
             />
           </div>
         </template>
@@ -104,12 +149,15 @@ onMounted(() => {
     </div>
     <div class="w-full px-1 py-2 border-3 flex border-slate-300 rounded-b-lg">
       <input
+        v-model="message"
         type="text"
         placeholder="Введите сообщение..."
         class="w-full text-slate-600 placeholder:text-slate-500 outline-0 mx-2"
+        @keyup.enter="sendMessage(message)"
       />
       <button
         class="cursor-pointer hover:bg-slate-700 group hover:disabled:bg-transparent flex justify-center rounded-lg transition-all"
+        @click="sendMessage(message)"
       >
         <SendIcon
           class="w-8 h-8 [&>*]:stroke-slate-500 group-hover:[&>*]:stroke-slate-400 p-1"

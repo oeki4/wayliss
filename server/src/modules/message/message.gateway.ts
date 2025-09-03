@@ -61,8 +61,8 @@ export class MessageGateway {
     @ConnectedSocket()
     client: SocketWithUser,
   ) {
-    console.log(data);
-    const jsonData = data as {
+    if (typeof data !== 'string') throw new Error('Incorrect message');
+    const jsonData = JSON.parse(data) as {
       chatId: number;
       message: string;
     };
@@ -72,7 +72,6 @@ export class MessageGateway {
       !this.getConnectedUser(client.request.user.sub)
     )
       return;
-    console.log(123);
 
     const chat = await this.prisma.chat.findUnique({
       where: {

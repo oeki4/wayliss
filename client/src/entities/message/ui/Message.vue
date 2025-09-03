@@ -5,6 +5,7 @@ defineProps<{
   position: "right" | "left";
   avatar: string;
   message: string;
+  date: string;
 }>();
 </script>
 
@@ -31,7 +32,7 @@ defineProps<{
         {{ message }}
       </p>
       <p class="w-full text-end text-sm font-montserrat text-slate-500">
-        {{ DateTime.now().toFormat("HH:mm dd.LL.yy") }}
+        {{ DateTime.fromISO(date).toFormat("HH:mm dd.LL.yy") }}
       </p>
     </div>
   </div>
