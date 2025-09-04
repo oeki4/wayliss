@@ -44,11 +44,13 @@ const { data: chat } = await useAsyncData(
 );
 
 const chatDialogSlice = useChatDialogSlice();
-const { messages } = storeToRefs(chatDialogSlice);
-const { setMessages, addMessage } = chatDialogSlice;
+const { messages, isLastPage } = storeToRefs(chatDialogSlice);
+const { setMessages, addMessage, fetchChat, setChatId } = chatDialogSlice;
 
 const displayedMessages = computed(() => {
-  return messages.value.length ? messages.value : chat.value?.Message || [];
+  return messages.value.length
+    ? messages.value
+    : [...(chat.value?.Message ?? [])].reverse();
 });
 
 const messagesContainer = ref<HTMLDivElement | null>(null);
@@ -80,7 +82,26 @@ const sendMessage = async (message: string) => {
 
 const message = ref("");
 
+const handleScrollDialog = async (e: Event) => {
+  if (!messagesContainer.value) return;
+  const target = e.target as HTMLElement;
+  if (target.scrollTop === 0) {
+    const oldScrollHeight = messagesContainer.value.scrollHeight;
+    await fetchChat();
+
+    if (isLastPage.value) return;
+    await nextTick();
+
+    const newScrollHeight = messagesContainer.value.scrollHeight;
+    messagesContainer.value.scrollTop = newScrollHeight - oldScrollHeight;
+  }
+};
+
 onMounted(async () => {
+  if (chat.value) {
+    setChatId(chat.value?.id);
+  }
+
   $socket.on("message:get", async (msg) => {
     const messageJSON = $convertSockMessageToJSON<MessageGetResponse>(msg);
     if (messageJSON.success) {
@@ -99,7 +120,7 @@ onMounted(async () => {
       await scrollToBottom();
     }
   });
-  if (chat.value?.Message) setMessages(chat.value?.Message);
+  if (chat.value?.Message) setMessages(chat.value?.Message.reverse());
   await scrollToBottom();
 });
 </script>
@@ -127,6 +148,7 @@ onMounted(async () => {
     <div
       ref="messagesContainer"
       class="px-3 py-2 h-full border-x-3 overflow-y-scroll border-slate-300"
+      @scroll="handleScrollDialog"
     >
       <div v-if="displayedMessages.length">
         <template

@@ -4,7 +4,7 @@ import type { User } from "@/entities/user";
 export interface MessageItem {
   id: number;
   type: MessageType;
-  createdAt: Date;
+  createdAt: string;
 
   content: string;
 

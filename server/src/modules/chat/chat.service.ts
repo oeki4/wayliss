@@ -142,8 +142,10 @@ export class ChatService {
     }
   }
 
-  async getChatById(user: JwtPayload, chatId: number) {
+  async getChatById(user: JwtPayload, chatId: number, page = 1, limit = 20) {
     try {
+      const skip = (page - 1) * limit;
+
       const chat = await this.prisma.chat.findFirst({
         where: {
           id: chatId,
@@ -160,6 +162,11 @@ export class ChatService {
             },
           },
           Message: {
+            orderBy: {
+              createdAt: 'desc', // последние сообщения первыми
+            },
+            skip,
+            take: limit,
             include: {
               User: {
                 omit: {
@@ -170,12 +177,16 @@ export class ChatService {
           },
         },
       });
+
       if (!chat) {
-        return new HttpException('Chat not found', ErrorCodes.CHAT_NOT_FOUND);
+        throw new HttpException('Chat not found', ErrorCodes.CHAT_NOT_FOUND);
       }
+
       return {
         success: true,
-        data: chat,
+        data: {
+          ...chat,
+        },
       };
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
@@ -184,6 +195,7 @@ export class ChatService {
           ErrorCodes.INTERNAL_SERVER_ERROR,
         );
       }
+      throw err;
     }
   }
 }

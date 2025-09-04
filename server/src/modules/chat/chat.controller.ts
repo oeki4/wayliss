@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -36,7 +37,8 @@ export class ChatController {
   getChatById(
     @Req() req: Request & { user: JwtPayload },
     @Param('chatId') chatId: number,
+    @Query('page') page: number,
   ) {
-    return this.chatService.getChatById(req.user, chatId);
+    return this.chatService.getChatById(req.user, chatId, page);
   }
 }
