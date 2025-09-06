@@ -106,7 +106,9 @@ onMounted(async () => {
     const messageJSON = $convertSockMessageToJSON<MessageGetResponse>(msg);
     if (messageJSON.success) {
       console.log("Получено новое сообщение: ", messageJSON);
-      addMessage(messageJSON.data);
+      if (messageJSON.data.chatId === chat.value?.id) {
+        addMessage(messageJSON.data);
+      }
       await scrollToBottom();
     }
   });
@@ -115,7 +117,9 @@ onMounted(async () => {
     const messageJSON = $convertSockMessageToJSON<MessageGetResponse>(msg);
     if (messageJSON.success) {
       console.log("Сообщение успешно отправлено: ", messageJSON);
-      addMessage(messageJSON.data);
+      if (messageJSON.data.chatId === chat.value?.id) {
+        addMessage(messageJSON.data);
+      }
       message.value = "";
       await scrollToBottom();
     }

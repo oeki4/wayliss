@@ -69,7 +69,7 @@ useSeoMeta({
           'w-full max-w-full md:max-w-[300px]': !chatsListHidden,
         }"
       >
-        <ChatList v-if="user" :user="user" :chats="chatList || []" />
+        <ChatList v-if="user" :user="user" :chats-list="chatList" />
       </div>
       <ChatDialog
         v-if="route.params.id && user"
