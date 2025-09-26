@@ -9,21 +9,35 @@ import { Prisma } from 'generated/prisma';
 export class ChatService {
   constructor(private prisma: PrismaService) {}
   async createChat(createChatDto: CreateChatDto, user: JwtPayload) {
-    if (createChatDto.userId === user.sub) {
-      throw new HttpException(
-        'Internal server error',
-        ErrorCodes.CHAT_WITH_YOURSELF,
-      );
-    }
-
     try {
       return this.prisma.$transaction(async (prisma) => {
+        // 1. Проверяем, что объявление существует
+        const announcement = await prisma.announcement.findUnique({
+          where: { id: createChatDto.announcementId },
+        });
+
+        if (!announcement) {
+          throw new HttpException(
+            'Announcement not found',
+            ErrorCodes.ANNOUNCEMENT_NOT_FOUND,
+          );
+        }
+
+        if (announcement.userId === user.sub) {
+          throw new HttpException(
+            'Internal server error',
+            ErrorCodes.CHAT_WITH_YOURSELF,
+          );
+        }
+
+        // 2. Проверяем существующий чат между этими пользователями по этому объявлению
         const existingChat = await prisma.chat.findFirst({
           where: {
+            announcementId: createChatDto.announcementId,
             UserChat: {
               every: {
                 userId: {
-                  in: [createChatDto.userId, user.sub],
+                  in: [announcement.userId, user.sub],
                 },
               },
             },
@@ -43,36 +57,32 @@ export class ChatService {
           },
         });
 
-        if (existingChat)
+        if (existingChat) {
           return {
             success: true,
-            data: {
-              chat: existingChat,
-            },
+            data: { chat: existingChat },
           };
+        }
+
+        // 3. Создаём новый чат
         const chat = await prisma.chat.create({
           data: {
             creatorId: user.sub,
-          },
-        });
-        await prisma.userChat.create({
-          data: {
-            chatId: chat.id,
-            userId: user.sub,
+            announcementId: createChatDto.announcementId,
           },
         });
 
-        await prisma.userChat.create({
-          data: {
-            chatId: chat.id,
-            userId: createChatDto.userId,
-          },
+        // 4. Добавляем участников
+        await prisma.userChat.createMany({
+          data: [
+            { chatId: chat.id, userId: user.sub },
+            { chatId: chat.id, userId: announcement.userId },
+          ],
         });
 
+        // 5. Возвращаем чат с пользователями
         const updatedChat = await prisma.chat.findFirst({
-          where: {
-            id: chat.id,
-          },
+          where: { id: chat.id },
           include: {
             UserChat: {
               include: {
@@ -87,11 +97,18 @@ export class ChatService {
             },
           },
         });
+
+        await prisma.message.create({
+          data: {
+            userId: user.sub,
+            chatId: chat.id,
+            content: createChatDto.message,
+          },
+        });
+
         return {
           success: true,
-          data: {
-            chat: updatedChat,
-          },
+          data: { chat: updatedChat },
         };
       });
     } catch (err) {
@@ -101,6 +118,7 @@ export class ChatService {
           ErrorCodes.INTERNAL_SERVER_ERROR,
         );
       }
+      throw err;
     }
   }
 

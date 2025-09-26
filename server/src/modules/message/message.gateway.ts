@@ -108,13 +108,10 @@ export class MessageGateway {
     });
     chat.UserChat.forEach((el) => {
       if (el.userId !== client.request.user.sub) {
-        const connectedUser = this.getConnectedUser(el.userId);
-        if (connectedUser) {
-          this.server.to(connectedUser.socketId).emit('message:get', {
-            success: true,
-            data: msg,
-          });
-        }
+        this.sendNewMessageNotification({
+          message: msg,
+          userId: el.userId,
+        });
       }
     });
   }
@@ -148,5 +145,21 @@ export class MessageGateway {
 
   getConnectedUser(id: number) {
     return this.connectedUsers.find((el) => el.id === id);
+  }
+
+  sendNewMessageNotification({
+    userId,
+    message,
+  }: {
+    userId: number;
+    message: unknown;
+  }) {
+    const recipient = this.getConnectedUser(userId);
+    if (recipient) {
+      this.server.to(recipient.socketId).emit('message:get', {
+        success: true,
+        data: message,
+      });
+    }
   }
 }

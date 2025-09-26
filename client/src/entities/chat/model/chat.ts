@@ -1,7 +1,11 @@
-export interface ChatListItem {
+export interface ChatListItem extends Chat {
+  unreadCount: number;
+}
+
+export interface Chat {
   id: number;
   creatorId: number;
-  unreadCount: number;
+  announcementId: number;
   UserChat: Array<{
     id: number;
     userId: number;

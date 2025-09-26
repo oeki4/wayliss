@@ -40,6 +40,8 @@ model Announcement {
   userId Int
 
   AnnouncementPhoto AnnouncementPhoto[]
+
+  Chat Chat[]
 }
 
 model AnnouncementPhoto {
@@ -55,6 +57,9 @@ model Chat {
 
   User      User @relation(fields: [creatorId], references: [id])
   creatorId Int
+
+  Announcement   Announcement? @relation(fields: [announcementId], references: [id])
+  announcementId Int?
 
   UserChat UserChat[]
   Message  Message[]

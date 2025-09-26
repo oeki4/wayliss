@@ -21,7 +21,7 @@
     "migrate:dev": "dotenv -e .development.env -- npx prisma migrate deploy",
     "migrate:prod": "npx prisma migrate deploy",
     "prisma:generate": "prisma generate",
-    "migrate:dev:init": "dotenv -e .development.env -- npx prisma migrate dev --name add_chats"
+    "migrate:dev:init": "dotenv -e .development.env -- npx prisma migrate dev --name init"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
