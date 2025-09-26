@@ -1,15 +1,41 @@
 <script setup lang="ts">
 import type { User } from "@/entities/user";
-import { ChatItem } from "@/entities/chat";
-import Dialog from "./Dialog/Dialog.vue";
 import RightArrowIcon from "@/shared/ui/Icons/RightArrowIcon.vue";
+import { ChatDialog } from "@/widgets/ChatDialog";
+import { ChatList } from "@/widgets/ChatList";
+import type { ChatListItem } from "@/entities/chat";
+import type { ServerResponse } from "@/shared/types/serverResponse";
+import { AUTH_TOKEN } from "@/shared/const/constants";
 
 const props = defineProps<{
   user: User | null;
 }>();
 
-if (!props.user) navigateTo("/login");
+const route = useRoute();
+
+if (isNaN(+route.params.id)) navigateTo("/");
+if (!props.user) {
+  navigateTo("/login");
+}
 const chatsListHidden = ref(false);
+
+const config = useRuntimeConfig();
+const token = useCookie(AUTH_TOKEN);
+
+const { data: chatList } = await useAsyncData("accountChats", async () => {
+  try {
+    const response = await $fetch<ServerResponse<ChatListItem[]>>("/chats", {
+      baseURL: import.meta.server ? config.SSR_API_URL : config.public.API_URL,
+      headers: {
+        authorization: `Bearer ${token.value}`,
+      },
+    });
+
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 useSeoMeta({
   title: `Wayliss - Чаты`,
@@ -43,25 +69,27 @@ useSeoMeta({
           'w-full max-w-full md:max-w-[300px]': !chatsListHidden,
         }"
       >
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
+        <ChatList v-if="user" :user="user" :chats-list="chatList" />
       </div>
-      <Dialog
+      <ChatDialog
+        v-if="route.params.id && user"
+        :user="user"
         class="transition-all duration-300 ease-linear"
         :class="{
           '!w-0 md:!w-full': !chatsListHidden,
           'w-full': chatsListHidden,
         }"
       />
+      <div
+        v-else
+        class="w-full rounded-lg flex flex-col justify-center items-center max-h-[550px] md:max-h-[650px] h-[550px] md:h-[650px] bg-slate-200 overflow-y-scroll"
+      >
+        <p
+          class="text-sm text-slate-500 font-montserrat font-semibold overflow-hidden whitespace-nowrap"
+        >
+          Выберите чат
+        </p>
+      </div>
     </div>
   </section>
 </template>

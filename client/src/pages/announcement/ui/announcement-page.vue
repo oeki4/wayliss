@@ -3,6 +3,8 @@ import type { ServerResponse } from "@/shared/types/serverResponse";
 import type { IAnnouncement } from "@/entities/announcement";
 import { useAlertSlice } from "@/entities/alert";
 import type { User } from "@/entities/user";
+import { useRespondAdSlice } from "@/widgets/RespondAdModal/model/slice/respondAdSlice";
+import RespondAdModal from "@/widgets/RespondAdModal/ui/RespondAdModal.vue";
 
 const route = useRoute();
 const config = useRuntimeConfig();
@@ -39,6 +41,8 @@ const { data } = await useAsyncData("announcementItem", async () => {
     return;
   }
 });
+
+const { setRespondAdModalVisible } = useRespondAdSlice();
 if (data.value) {
   announcement.value = data.value;
 
@@ -100,6 +104,7 @@ if (data.value) {
 
         <button
           class="bg-blue-500 hover:bg-blue-600 whitespace-nowrap cursor-pointer transition-all font-montserrat text-white font-bold py-4 px-4 rounded-lg"
+          @click="setRespondAdModalVisible(true)"
         >
           Отозваться на объявление
         </button>
@@ -116,6 +121,7 @@ if (data.value) {
       </p>
     </div>
   </section>
+  <RespondAdModal />
 </template>
 <style>
 .announcement-page .carousel__pagination-button {

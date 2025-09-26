@@ -26,6 +26,8 @@ model User {
   Chat         Chat[]
   UserChat     UserChat[]
   Message      Message[]
+
+  MessageRead MessageRead[]
 }
 
 model Announcement {
@@ -38,6 +40,8 @@ model Announcement {
   userId Int
 
   AnnouncementPhoto AnnouncementPhoto[]
+
+  Chat Chat[]
 }
 
 model AnnouncementPhoto {
@@ -53,6 +57,9 @@ model Chat {
 
   User      User @relation(fields: [creatorId], references: [id])
   creatorId Int
+
+  Announcement   Announcement? @relation(fields: [announcementId], references: [id])
+  announcementId Int?
 
   UserChat UserChat[]
   Message  Message[]
@@ -79,4 +86,19 @@ model Message {
 
   Chat   Chat @relation(fields: [chatId], references: [id])
   chatId Int
+
+  MessageRead MessageRead[]
+}
+
+model MessageRead {
+  id     Int      @id @default(autoincrement())
+  readAt DateTime @default(now())
+
+  Message   Message @relation(fields: [messageId], references: [id])
+  messageId Int
+
+  User   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  @@unique([messageId, userId])
 }

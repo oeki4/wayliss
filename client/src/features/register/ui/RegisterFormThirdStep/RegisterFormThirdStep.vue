@@ -60,11 +60,14 @@ const avatarUrl = computed(() =>
             @change="handleChange"
             @blur="handleBlur"
           />
-          <img
+          <NuxtImg
             v-if="avatarUrl"
             :src="avatarUrl"
             class="rounded-xl cursor-pointer hover:border-blue-600 border-blue-500 transition-all max-h-50 border-3 w-full"
             alt="preview"
+            format="webp"
+            quality="100"
+            lazy
           />
           <span
             v-else
