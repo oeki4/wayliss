@@ -36,7 +36,9 @@ const onSubmit = handleSubmit(async (values) => {
     });
 
     token.value = res.data.token;
+
     authToken.value = res.data.token;
+    console.log(authToken.value);
     setAlert("Авторизация прошла успешно!");
   } catch (e) {
     if (e instanceof Error) {
@@ -58,7 +60,7 @@ const onSubmit = handleSubmit(async (values) => {
     if (authToken.value) {
       const res = await fetchProfile(authToken.value);
       setUser(res.data);
-      reloadNuxtApp();
+      // reloadNuxtApp();
     } else {
       setAlert("Ошибка при авторизации. Попробуйте позже...", "error");
     }
@@ -100,6 +102,7 @@ const onSubmit = handleSubmit(async (values) => {
       <button
         class="font-montserrat font-semibold cursor-pointer bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
         @click.prevent="onSubmit"
+        type="button"
       >
         Авторизация
       </button>
