@@ -4,7 +4,7 @@ import { useUser } from "@/composables/useUser";
 
 const user = useUser();
 
-if (!user.value) navigateTo("/login");
+if (user.value) navigateTo("/");
 
 useSeoMeta({
   title: `Wayliss - Регистрация`,
