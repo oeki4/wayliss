@@ -14,7 +14,7 @@ defineProps<{
     class="px-3 py-2 w-fit bg-slate-300 rounded-lg flex items-center gap-2.5"
     :class="{ 'flex-row-reverse': position === 'right' }"
   >
-    <NuxtImg
+    <img
       :src="avatar"
       alt="avatar"
       class="min-w-8 min-h-8 border-2 border-slate-400 rounded-full"

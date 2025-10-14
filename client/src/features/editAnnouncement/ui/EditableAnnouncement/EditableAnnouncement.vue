@@ -38,7 +38,7 @@ const carouselConfig = {
       v-bind="carouselConfig"
     >
       <Slide v-for="item in announcement.AnnouncementPhoto" :key="item.id">
-        <NuxtImg
+        <img
           format="webp"
           :src="`${config.public.STATIC_URL}/${item.name}`"
           sizes="516px"
@@ -51,7 +51,7 @@ const carouselConfig = {
       </template>
     </Carousel>
 
-    <NuxtImg
+    <img
       v-else-if="announcement.AnnouncementPhoto.length === 1"
       format="webp"
       :src="`${config.public.STATIC_URL}/${announcement.AnnouncementPhoto[0].name}`"

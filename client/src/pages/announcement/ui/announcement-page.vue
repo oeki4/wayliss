@@ -66,7 +66,7 @@ if (data.value) {
         v-bind="carouselConfig"
       >
         <Slide v-for="item in data.AnnouncementPhoto" :key="item.id">
-          <NuxtImg
+          <img
             format="webp"
             :src="`${config.public.STATIC_URL}/${item.name}`"
             sizes="896px"
@@ -89,7 +89,7 @@ if (data.value) {
         <div class="flex flex-col gap-4">
           <h3 class="font-montserrat font-medium">Опубликовал:</h3>
           <div class="flex items-center gap-4">
-            <NuxtImg
+            <img
               format="webp"
               width="60"
               height="60"

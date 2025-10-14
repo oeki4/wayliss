@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import type { User } from "@/entities/user";
-import { ChatItem } from "@/entities/chat";
-import Dialog from "./Dialog/Dialog.vue";
 import RightArrowIcon from "@/shared/ui/Icons/RightArrowIcon.vue";
 import { ChatDialog } from "@/widgets/ChatDialog";
 import { ChatList } from "@/widgets/ChatList";

@@ -24,8 +24,8 @@ services:
     container_name: backend
     command: sh -c "npx prisma migrate deploy && npx prisma generate && npm run start:dev"
     volumes:
-      - ./avatars:/app/avatars
-      - ./uploads:/app/uploads
+      - ./server/avatars:/app/avatars
+      - ./server/uploads:/app/uploads
       - ./server:/usr/src/app
       - /usr/src/app/node_modules
     environment:
@@ -59,6 +59,7 @@ services:
       - API_URL=${CLIENT_API_URL:-http://localhost:3001/api}
       - SSR_API_URL=${CLIENT_SSR_API_URL:-http://backend:3001/api}
       - STATIC_URL=${CLIENT_STATIC_URL:-http://localhost:3001}
+      - SOCKET_URL=${CLIENT_SOCKET_URL:-ws://localhost:3001}
     volumes:
       - ./client:/app
       - /app/node_modules

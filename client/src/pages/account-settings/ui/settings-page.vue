@@ -25,7 +25,7 @@ useSeoMeta({
       <EditProfileActions />
     </div>
     <div class="mb-6 w-full sm:max-w-2xs flex justify-center sm:justify-start">
-      <NuxtImg
+      <img
         v-if="user?.avatar"
         width="200px"
         height="200px"
