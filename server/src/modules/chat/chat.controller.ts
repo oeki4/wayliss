@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { AuthGuard } from '@/guards/auth.guard';
 import { CreateChatDto } from './dto/create-chat.dto';
@@ -21,5 +30,15 @@ export class ChatController {
   @Get()
   getAllChats(@Req() req: Request & { user: JwtPayload }) {
     return this.chatService.getAllChats(req.user);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get(':chatId')
+  getChatById(
+    @Req() req: Request & { user: JwtPayload },
+    @Param('chatId') chatId: number,
+    @Query('page') page: number,
+  ) {
+    return this.chatService.getChatById(req.user, chatId, page);
   }
 }
