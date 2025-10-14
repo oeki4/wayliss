@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import type { User } from "@/entities/user";
 import { ChatItem } from "@/entities/chat";
 import Dialog from "./Dialog/Dialog.vue";
 import RightArrowIcon from "@/shared/ui/Icons/RightArrowIcon.vue";
+import { useUser } from "@/composables/useUser";
 
-const props = defineProps<{
-  user: User | null;
-}>();
+const user = useUser();
 
-if (!props.user) navigateTo("/login");
+if (!user.value) navigateTo("/login");
 const chatsListHidden = ref(false);
 
 useSeoMeta({

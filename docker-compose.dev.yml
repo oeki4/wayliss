@@ -56,9 +56,9 @@ services:
       - HOST=${HOST:-0.0.0.0}
       - PORT=${CLIENT_PORT:-3000}
       - NODE_ENV=${NODE_ENV:-development}
-      - CLIENT_API_URL=${CLIENT_API_URL:-http://localhost:3001/api}
-      - CLIENT_SSR_API_URL=${CLIENT_SSR_API_URL:-http://localhost:3001/api}
-      - CLIENT_STATIC_URL=${CLIENT_STATIC_URL:-http://localhost:3001}
+      - API_URL=${CLIENT_API_URL:-http://localhost:3001/api}
+      - SSR_API_URL=${CLIENT_SSR_API_URL:-http://backend:3001/api}
+      - STATIC_URL=${CLIENT_STATIC_URL:-http://localhost:3001}
     volumes:
       - ./client:/app
       - /app/node_modules

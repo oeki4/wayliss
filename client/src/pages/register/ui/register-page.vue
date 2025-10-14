@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { RegisterForm } from "@/features/register";
-import type { User } from "@/entities/user";
+import { useUser } from "@/composables/useUser";
 
-const props = defineProps<{
-  user: User | null;
-}>();
+const user = useUser();
 
-if (props.user) navigateTo("/");
+if (!user.value) navigateTo("/login");
 
 useSeoMeta({
   title: `Wayliss - Регистрация`,

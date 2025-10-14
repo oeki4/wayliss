@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import GlassIcon from "@/shared/ui/Icons/GlassIcon.vue";
 import UserIcon from "@/shared/ui/Icons/UserIcon.vue";
-import type { User } from "@/entities/user";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 import { AUTH_TOKEN } from "@/shared/const/constants";
 import MessageIcon from "@/shared/ui/Icons/MessageIcon.vue";
+import { useUser } from "@/composables/useUser";
 
-defineProps<{
-  user: User | null;
-}>();
+const user = useUser();
 
 const config = useRuntimeConfig();
 
@@ -49,7 +47,7 @@ const logout = () => {
               width="40"
               height="40"
               alt="avatar"
-              :src="`${config.public.API_URL}/users/${user.id}/avatar`"
+              :src="`${config.public.API_URL}/users/${user?.id}/avatar`"
           /></MenuButton>
           <Transition
             enter-active-class="transition duration-100 ease-out"

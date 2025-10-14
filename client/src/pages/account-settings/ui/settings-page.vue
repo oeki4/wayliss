@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import type { User } from "@/entities/user";
 import CameraIcon from "@/shared/ui/Icons/CameraIcon.vue";
 import { EditProfileActions, EditProfileForm } from "@/features/editProfile";
+import { useUser } from "@/composables/useUser";
 const config = useRuntimeConfig();
 
-const props = defineProps<{
-  user: User | null;
-}>();
+const user = useUser();
 
-if (!props.user) navigateTo("/login");
+if (!user.value) navigateTo("/login");
 
 useSeoMeta({
   title: `Wayliss - Настройки`,

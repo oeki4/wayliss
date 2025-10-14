@@ -9,9 +9,12 @@ import { useLoginFormSlice } from "../../model/slice/useLoginFormSlice";
 import type { FetchError } from "ofetch";
 import { AUTH_TOKEN } from "@/shared/const/constants";
 import { useUserSlice } from "@/entities/user";
+import { useUser } from "@/composables/useUser";
 const { setAlert } = useAlertSlice();
 const { login } = useLoginFormSlice();
 const { setUser, fetchProfile } = useUserSlice();
+const user = useUser();
+
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
     email: yup
@@ -60,7 +63,8 @@ const onSubmit = handleSubmit(async (values) => {
     if (authToken.value) {
       const res = await fetchProfile(authToken.value);
       setUser(res.data);
-      // reloadNuxtApp();
+      user.value = res.data;
+      reloadNuxtApp();
     } else {
       setAlert("Ошибка при авторизации. Попробуйте позже...", "error");
     }
