@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { User } from "@/entities/user";
 import type { ServerResponse } from "@/shared/types/serverResponse";
 import type { IAnnouncement } from "@/entities/announcement";
 import { AUTH_TOKEN } from "@/shared/const/constants";
@@ -10,20 +9,18 @@ import {
 } from "@/features/editAnnouncement";
 import { ShowCreateAnnouncementModalButton } from "@/features/createAnnouncement";
 import { useEditAnnouncementSlice } from "@/features/editAnnouncement/model/slice/useEditAnnouncementSlice";
+import { useUser } from "@/composables/useUser";
 
+const user = useUser();
+if (!user.value) navigateTo("/login");
+
+const token = useCookie(AUTH_TOKEN);
+const config = useRuntimeConfig();
+const announcements: Ref<IAnnouncement[] | null> = ref(null);
 const { setAlert } = useAlertSlice();
 const { editableAnnouncement, editAnnouncementModalIsOpen } = storeToRefs(
   useEditAnnouncementSlice(),
 );
-
-const props = defineProps<{
-  user: User | null;
-}>();
-const announcements: Ref<IAnnouncement[] | null> = ref(null);
-
-if (!props.user) navigateTo("/login");
-const token = useCookie(AUTH_TOKEN);
-const config = useRuntimeConfig();
 
 const { data } = await useAsyncData("accountAnnouncements", async () => {
   try {

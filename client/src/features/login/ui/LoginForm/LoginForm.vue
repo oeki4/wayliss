@@ -9,9 +9,12 @@ import { useLoginFormSlice } from "../../model/slice/useLoginFormSlice";
 import type { FetchError } from "ofetch";
 import { AUTH_TOKEN } from "@/shared/const/constants";
 import { useUserSlice } from "@/entities/user";
+import { useUser } from "@/composables/useUser";
 const { setAlert } = useAlertSlice();
 const { login } = useLoginFormSlice();
 const { setUser, fetchProfile } = useUserSlice();
+const user = useUser();
+
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
     email: yup
@@ -36,7 +39,9 @@ const onSubmit = handleSubmit(async (values) => {
     });
 
     token.value = res.data.token;
+
     authToken.value = res.data.token;
+    console.log(authToken.value);
     setAlert("Авторизация прошла успешно!");
   } catch (e) {
     if (e instanceof Error) {
@@ -58,6 +63,7 @@ const onSubmit = handleSubmit(async (values) => {
     if (authToken.value) {
       const res = await fetchProfile(authToken.value);
       setUser(res.data);
+      user.value = res.data;
       reloadNuxtApp();
     } else {
       setAlert("Ошибка при авторизации. Попробуйте позже...", "error");
@@ -100,6 +106,7 @@ const onSubmit = handleSubmit(async (values) => {
       <button
         class="font-montserrat font-semibold cursor-pointer bg-blue-500 hover:opacity-50 transition-all text-slate-200 py-3 rounded-lg"
         @click.prevent="onSubmit"
+        type="button"
       >
         Авторизация
       </button>

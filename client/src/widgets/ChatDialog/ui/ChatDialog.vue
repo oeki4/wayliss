@@ -135,7 +135,7 @@ onMounted(async () => {
     <div
       class="px-3 py-2 flex items-center gap-2.5 border-3 border-slate-300 rounded-t-lg"
     >
-      <NuxtImg
+      <img
         :src="`${config.public.API_URL}/users/${user?.id}/avatar`"
         :alt="`${user?.firstName}'s avatar`"
         class="w-15 h-15 rounded-full border-3 border-slate-400"

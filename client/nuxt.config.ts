@@ -49,7 +49,7 @@ export default defineNuxtConfig({
   },
   image: {
     formats: ["webp", "avif"],
-    domains: ["localhost:3001"],
+    domains: ["localhost:3001", "backend"],
   },
   runtimeConfig: {
     SSR_API_URL: process.env.SSR_API_URL,

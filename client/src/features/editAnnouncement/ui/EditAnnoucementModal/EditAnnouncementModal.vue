@@ -137,7 +137,7 @@ const onAddPhoto = async (e: Event) => {
                 :key="item.url"
                 class="w-[150px] h-24 relative group"
               >
-                <NuxtImg
+                <img
                   :src="item.url"
                   class="rounded-xl cursor-pointer hover:border-blue-600 border-blue-500 transition-all w-full h-full border-3"
                   alt="preview"

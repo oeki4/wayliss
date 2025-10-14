@@ -1,22 +1,18 @@
 <script setup lang="ts">
-import type { User } from "@/entities/user";
 import RightArrowIcon from "@/shared/ui/Icons/RightArrowIcon.vue";
 import { ChatDialog } from "@/widgets/ChatDialog";
 import { ChatList } from "@/widgets/ChatList";
 import type { ChatListItem } from "@/entities/chat";
 import type { ServerResponse } from "@/shared/types/serverResponse";
 import { AUTH_TOKEN } from "@/shared/const/constants";
+import { useUser } from "@/composables/useUser";
 
-const props = defineProps<{
-  user: User | null;
-}>();
+const user = useUser();
 
 const route = useRoute();
 
 if (isNaN(+route.params.id)) navigateTo("/");
-if (!props.user) {
-  navigateTo("/login");
-}
+if (!user.value) navigateTo("/login");
 const chatsListHidden = ref(false);
 
 const config = useRuntimeConfig();
